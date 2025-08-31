@@ -43,6 +43,7 @@ class Location(MP_Node):
 
     node_order_by = ["name"]
 
+    
     class Meta:
         ordering = ["path"]
 
