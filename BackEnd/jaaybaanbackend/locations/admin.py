@@ -40,13 +40,19 @@ class LocationAdmin(TreeAdmin):
         "name",
         "location_type",
         "is_container",
-        "get_parent_name",
-        "get_depth",
-        "created_at",
+        "needs_cleaning",
+        "cleaned_time",
     )
-    list_filter = ("location_type", "is_container", "created_at")
+    list_filter = ("location_type", "is_container", "created_at", "cleaned_time")
     search_fields = ("name", "description", "barcode")
-    readonly_fields = ("path", "depth", "numchild", "created_at", "updated_at")
+    readonly_fields = (
+        "path",
+        "depth",
+        "numchild",
+        "cleaned_time",
+        "created_at",
+        "updated_at",
+    )
     inlines = [LocationImageInline]
 
     fieldsets = (
@@ -58,6 +64,13 @@ class LocationAdmin(TreeAdmin):
             {
                 "fields": ("barcode", "quantity", "value"),
                 "description": "Item-specific information",
+            },
+        ),
+        (
+            "Cleaning Information",
+            {
+                "fields": ("cleaned_duration", "cleaned_time"),
+                "description": "Track cleaning schedule and last cleaning time",
             },
         ),
         (
@@ -80,6 +93,16 @@ class LocationAdmin(TreeAdmin):
         return parent.name if parent else "Root"
 
     get_parent_name.short_description = "Parent"
+
+    def needs_cleaning(self, obj):
+        """Display cleaning status with visual indicator"""
+        if obj.needs_cleaning():
+            return "🔴"
+        else:
+            return "✅"
+
+    needs_cleaning.short_description = "Clean"
+    needs_cleaning.admin_order_field = "cleaned_time"
 
     def save_model(self, request, obj, form, change):
         if not change:  # Creating new object

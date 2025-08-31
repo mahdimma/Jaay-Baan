@@ -29,6 +29,15 @@ class Location(MP_Node):
     quantity = models.PositiveIntegerField(default=1)
     value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
+    # Cleaning tracking
+    cleaned_time = models.DateTimeField(
+        auto_now_add=True, help_text="When this location was last cleaned"
+    )
+    cleaned_duration = models.PositiveIntegerField(
+        default=30,
+        help_text="Duration in days before this location needs cleaning again",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -61,6 +70,24 @@ class Location(MP_Node):
     def get_leaf_items(self):
         """Get items that are not containers (leaf nodes)"""
         return self.get_descendants(include_self=True).filter(is_container=False)
+
+    def needs_cleaning(self):
+        """Check if this location needs cleaning based on cleaned_time and cleaned_duration"""
+        from django.utils import timezone
+        from datetime import timedelta
+
+        if not self.cleaned_time:
+            return True
+
+        next_cleaning_date = self.cleaned_time + timedelta(days=self.cleaned_duration)
+        return timezone.now() > next_cleaning_date
+
+    def mark_as_cleaned(self):
+        """Mark this location as cleaned by updating the cleaned_time to now"""
+        from django.utils import timezone
+
+        self.cleaned_time = timezone.now()
+        self.save(update_fields=["cleaned_time"])
 
     def save(self, *args, **kwargs):
         """Override save to ensure proper tree structure"""
