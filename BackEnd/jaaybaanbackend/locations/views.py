@@ -71,14 +71,25 @@ class LocationDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LocationSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
         # Check if location has children
-        if instance.get_children().exists():
+        children_count = instance.get_children().count()
+        if children_count > 0:
             return Response(
-                {"error": "Cannot delete location with children"},
+                {
+                    "detail": "Cannot delete location that has child locations. Please delete or move all child locations first.",
+                    "children_count": children_count,
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Delete the instance
         instance.delete()
+
+        # Return success response with 204 No Content
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET"])
@@ -116,11 +127,18 @@ def location_move(request, pk):
 
     if serializer.is_valid():
         new_parent_id = serializer.validated_data.get("new_parent_id")
-        position = serializer.validated_data.get("position", "last-child")
 
         try:
             if new_parent_id:
                 new_parent = get_object_or_404(Location, id=new_parent_id)
+
+                # Check if trying to move to itself
+                if new_parent.id == location.id:
+                    return Response(
+                        {"error": "Cannot move location to itself"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 if not new_parent.is_container:
                     return Response(
                         {"error": "Cannot move to a non-container location"},
@@ -134,10 +152,15 @@ def location_move(request, pk):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                location.move(new_parent, pos=position)
+                location.move(new_parent, pos="sorted-child")
             else:
                 # Move to root level
-                location.move(Location.get_first_root_node(), pos="right")
+                first_root = Location.get_first_root_node()
+                if first_root:
+                    location.move(first_root, pos="sorted-sibling")
+                else:
+                    # If no root nodes exist, convert to root
+                    location.move(None, pos="sorted-child")
 
             return Response({"message": "Location moved successfully"})
         except Exception as e:
@@ -272,6 +295,8 @@ def location_statistics(request):
             "count": all_locations.filter(location_type=type_code).count(),
         }
 
+    return Response(stats)
+
 
 @api_view(["POST"])
 @permission_classes([permissions.IsAuthenticated])
@@ -353,8 +378,17 @@ def location_bulk_operations(request):
 
         for location in locations:
             try:
+                # Check if trying to move to itself
+                if new_parent.id == location.id:
+                    results["failed"].append(
+                        {
+                            "id": location.id,
+                            "name": location.name,
+                            "error": "Cannot move location to itself",
+                        }
+                    )
                 # Check if new_parent is not a descendant of location
-                if new_parent in location.get_descendants():
+                elif new_parent in location.get_descendants():
                     results["failed"].append(
                         {
                             "id": location.id,
@@ -363,7 +397,7 @@ def location_bulk_operations(request):
                         }
                     )
                 else:
-                    location.move(new_parent, pos="last-child")
+                    location.move(new_parent, pos="sorted-child")
                     results["processed"] += 1
             except Exception as e:
                 results["failed"].append(
@@ -378,6 +412,8 @@ def location_bulk_operations(request):
 
     if results["failed"]:
         results["success"] = False
+
+    return Response(results)
 
 
 @api_view(["GET"])
@@ -430,7 +466,7 @@ def location_import(request):
 
                     location = Location(**validated_data)
                     location.save()
-                    location.move(parent, pos="last-child")
+                    location.move(parent, pos="sorted-child")
                 else:
                     # Create as root node
                     location = Location.add_root(**validated_data)

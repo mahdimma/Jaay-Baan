@@ -146,16 +146,193 @@ GET /api/v1/locations/{id}/
 
 ### ویرایش مکان
 
+#### ویرایش کامل مکان (PUT)
+
+برای به‌روزرسانی کامل یک مکان، همه فیلدهای موجود باید ارسال شوند:
+
 ```http
 PUT /api/v1/locations/{id}/
-PATCH /api/v1/locations/{id}/
+Content-Type: application/json
+Authorization: Token your_auth_token
+
+{
+    "name": "اتاق خواب اصلی",
+    "location_type": "room",
+    "description": "اتاق خواب بزرگ با کمد دیواری",
+    "is_container": true,
+    "barcode": "ROOM_001",
+    "quantity": 1,
+    "value": 500000,
+    "cleaned_duration": 45
+}
 ```
+
+#### ویرایش جزئی مکان (PATCH)
+
+برای به‌روزرسانی فیلدهای خاص، فقط فیلدهای مورد نظر را ارسال کنید:
+
+```http
+PATCH /api/v1/locations/{id}/
+Content-Type: application/json
+Authorization: Token your_auth_token
+
+{
+    "name": "اتاق خواب اصلاح شده",
+    "description": "توضیحات جدید"
+}
+```
+
+#### نمونه‌های کاربردی ویرایش
+
+**تغییر نام مکان:**
+
+```http
+PATCH /api/v1/locations/5/
+Content-Type: application/json
+
+{
+    "name": "نام جدید مکان"
+}
+```
+
+**اضافه کردن بارکد:**
+
+```http
+PATCH /api/v1/locations/5/
+Content-Type: application/json
+
+{
+    "barcode": "BC_12345"
+}
+```
+
+**تغییر نوع مکان:**
+
+```http
+PATCH /api/v1/locations/5/
+Content-Type: application/json
+
+{
+    "location_type": "shelf",
+    "is_container": true
+}
+```
+
+**تنظیم مقدار و مدت زمان تمیزکاری:**
+
+```http
+PATCH /api/v1/locations/5/
+Content-Type: application/json
+
+{
+    "value": 250000,
+    "cleaned_duration": 30
+}
+```
+
+#### Response موفق:
+
+```json
+{
+  "id": 5,
+  "name": "اتاق خواب اصلی",
+  "location_type": "room",
+  "description": "اتاق خواب بزرگ با کمد دیواری",
+  "is_container": true,
+  "barcode": "ROOM_001",
+  "quantity": 1,
+  "value": 500000,
+  "cleaned_time": "2025-01-01T10:00:00Z",
+  "cleaned_duration": 45,
+  "created_at": "2025-01-01T10:00:00Z",
+  "updated_at": "2025-01-01T12:30:00Z",
+  "breadcrumb": "خانه من > اتاق خواب اصلی",
+  "children_count": 0,
+  "needs_cleaning": false,
+  "images": []
+}
+```
+
+#### خطاهای رایج:
+
+**400 Bad Request - داده نامعتبر:**
+
+```json
+{
+  "location_type": [
+    "Invalid choice. Choose from: house, room, storage, shelf, container, box, item, other"
+  ]
+}
+```
+
+**400 Bad Request - تغییر وضعیت container غیرمجاز:**
+
+```json
+{
+  "is_container": [
+    "Cannot change container status to non-container when location has children. Please move or delete all child locations first."
+  ]
+}
+```
+
+**404 Not Found - مکان پیدا نشد:**
+
+```json
+{
+  "detail": "Not found."
+}
+```
+
+#### نکات مهم:
+
+- برای PUT، ارسال همه فیلدها الزامی است
+- برای PATCH، فقط فیلدهای تغییر یافته را ارسال کنید
+- فیلد `parent_id` از طریق endpoint جابجایی تغییر می‌کند نه ویرایش
+- تغییر `is_container` از true به false فقط زمانی امکان‌پذیر است که مکان فرزند نداشته باشد
 
 ### حذف مکان
 
 ```http
 DELETE /api/v1/locations/{id}/
+Authorization: Token your_auth_token
 ```
+
+#### Response موفق:
+
+**Status Code:** `204 No Content` (حذف موفق بدون محتوای response)
+
+#### خطاهای رایج:
+
+**400 Bad Request - مکان دارای فرزند است:**
+
+```json
+{
+  "detail": "Cannot delete location that has child locations. Please delete or move all child locations first.",
+  "children_count": 3
+}
+```
+
+**404 Not Found - مکان پیدا نشد:**
+
+```json
+{
+  "detail": "Not found."
+}
+```
+
+**401 Unauthorized - عدم احراز هویت:**
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### نکات مهم:
+
+- برای حذف مکان، ابتدا تمام فرزندان آن باید حذف یا جابجا شوند
+- حذف مکان منجر به حذف تمام تصاویر مرتبط با آن نیز می‌شود
+- این عمل غیرقابل بازگشت است
 
 ## Navigation و Tree Structure
 
@@ -196,12 +373,60 @@ POST /api/v1/locations/{id}/move/
 Content-Type: application/json
 
 {
-    "new_parent_id": 5,
-    "position": "last-child"
+    "new_parent_id": 5
 }
 ```
 
-Position options: `first-child`, `last-child`, `left`, `right`
+**برای جابجایی به root (بدون parent):**
+
+```http
+POST /api/v1/locations/{id}/move/
+Content-Type: application/json
+```
+
+**یا**
+
+```http
+POST /api/v1/locations/{id}/move/
+Content-Type: application/json
+{
+    "new_parent_id": null,
+}
+```
+
+**نکات مهم:**
+
+- سیستم به صورت خودکار موقعیت مناسب را براساس ترتیب الفبایی نام‌ها تعیین می‌کند
+- مکان‌ها به صورت خودکار براساس نام مرتب می‌شوند
+- نمی‌توان مکان را به خودش جابجا کرد
+- نمی‌توان مکان را به یکی از فرزندانش جابجا کرد
+- فقط می‌توان به مکان‌های container جابجا کرد
+
+#### خطاهای احتمالی:
+
+**400 Bad Request - تلاش برای جابجایی به خودش:**
+
+```json
+{
+  "error": "Cannot move location to itself"
+}
+```
+
+**400 Bad Request - تلاش برای جابجایی به فرزند:**
+
+```json
+{
+  "error": "Cannot move location to its own descendant"
+}
+```
+
+**400 Bad Request - تلاش برای جابجایی به مکان غیر container:**
+
+```json
+{
+  "error": "Cannot move to a non-container location"
+}
+```
 
 ### علامت‌گذاری به عنوان تمیز شده
 
@@ -276,6 +501,21 @@ Operations:
 - `mark_cleaned`: علامت‌گذاری به عنوان تمیز
 - `delete`: حذف (فقط مکان‌های بدون فرزند)
 - `move_to_parent`: جابجایی به parent جدید (نیاز به `new_parent_id`)
+
+**نمونه جابجایی گروهی:**
+
+```http
+POST /api/v1/locations/bulk-operations/
+Content-Type: application/json
+
+{
+    "operation": "move_to_parent",
+    "location_ids": [1, 2, 3, 4],
+    "new_parent_id": 5
+}
+```
+
+**نکته:** مکان‌ها به صورت خودکار براساس نام مرتب می‌شوند.
 
 ## Images
 
@@ -352,5 +592,7 @@ Content-Type: application/json
 
 - همه مکان‌ها دارای ساختار درختی هستند
 - فقط container ها می‌توانند فرزند داشته باشند
+- مکان‌ها به صورت خودکار براساس نام (الفبایی) مرتب می‌شوند
+- هنگام جابجایی مکان‌ها، موقعیت به صورت خودکار تعیین می‌شود
 - تمام تاریخ‌ها در فرمت ISO 8601 UTC هستند
 - تصاویر در مسیر `/media/location_images/` ذخیره می‌شوند

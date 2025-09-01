@@ -46,6 +46,23 @@ class LocationSerializer(serializers.ModelSerializer):
     def get_needs_cleaning(self, obj):
         return obj.needs_cleaning()
 
+    def validate_is_container(self, value):
+        """
+        Validate that is_container cannot be changed from True to False
+        if the location has children.
+        """
+        # Only validate during update operations
+        if self.instance:
+            # If trying to change from True to False
+            if self.instance.is_container and not value:
+                # Check if location has children
+                if self.instance.get_children().exists():
+                    raise serializers.ValidationError(
+                        "Cannot change container status to non-container when location has children. "
+                        "Please move or delete all child locations first."
+                    )
+        return value
+
 
 class LocationTreeSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
