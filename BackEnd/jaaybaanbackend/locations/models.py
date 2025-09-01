@@ -43,7 +43,6 @@ class Location(MP_Node):
 
     node_order_by = ["name"]
 
-    
     class Meta:
         ordering = ["path"]
 
@@ -52,9 +51,8 @@ class Location(MP_Node):
 
     def get_breadcrumb(self):
         """Returns the path as breadcrumb"""
-        return " > ".join(
-            [ancestor.name for ancestor in self.get_ancestors(include_self=True)]
-        )
+        ancestors = list(self.get_ancestors()) + [self]
+        return " > ".join([ancestor.name for ancestor in ancestors])
 
     def get_all_items(self):
         """Get all items in this location and its descendants"""

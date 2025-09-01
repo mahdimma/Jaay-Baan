@@ -6,7 +6,7 @@
 
 ### Login
 
-- **URL**: `/api/auth/login/`
+- **URL**: `/api/v1/auth/login/`
 - **Method**: `POST`
 - **Body**:
 
@@ -29,7 +29,7 @@
 
 ### Logout
 
-- **URL**: `/api/auth/logout/`
+- **URL**: `/api/v1/auth/logout/`
 - **Method**: `POST`
 - **Headers**: `Authorization: Token your_auth_token`
 - **Response**:

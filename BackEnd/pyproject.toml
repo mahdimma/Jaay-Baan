@@ -11,4 +11,6 @@ dependencies = [
     "python-dotenv>=0.21.0",
     "django-treebeard>=4.7.0",
     "pillow>=10.0.0",
+    "django-filter>=24.3",
+    "django-cors-headers>=4.4.0",
 ]
