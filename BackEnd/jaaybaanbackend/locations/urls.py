@@ -30,7 +30,6 @@ urlpatterns = [
     ),
     # Data management
     path("export/", views.location_export, name="location-export"),
-    path("import/", views.location_import, name="location-import"),
     # Location images
     path(
         "<int:location_id>/images/",

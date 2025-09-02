@@ -550,22 +550,45 @@ DELETE /api/v1/locations/{location_id}/images/{image_id}/
 GET /api/v1/locations/export/
 ```
 
-### Import کردن داده‌ها
+**Response:**
 
-```http
-POST /api/v1/locations/import/
-Content-Type: application/json
-
-[
+```json
+{
+  "count": 6,
+  "data": [
     {
-        "name": "مکان جدید",
-        "location_type": "item",
-        "description": "توضیحات",
-        "is_container": false,
-        "barcode": "BARCODE_001",
-        "parent_id": 5
+      "id": 6,
+      "name": "fff",
+      "location_type": "house",
+      "description": "dfdfd",
+      "is_container": true,
+      "barcode": "ff",
+      "quantity": 1,
+      "value": "75.00",
+      "cleaned_duration": 30,
+      "breadcrumb_path": "fff",
+      "parent_name": null,
+      "images_count": 0,
+      "created_at": "2025-08-31T17:14:03.322849Z"
+    },
+    {
+      "id": 8,
+      "name": "ff",
+      "location_type": "room",
+      "description": "ef",
+      "is_container": false,
+      "barcode": null,
+      "quantity": 1,
+      "value": null,
+      "cleaned_duration": 30,
+      "breadcrumb_path": "fff > ff",
+      "parent_name": "fff",
+      "images_count": 0,
+      "created_at": "2025-08-31T17:17:18.806985Z"
     }
-]
+  ],
+  "exported_at": "2025-09-01T14:35:28.039402Z"
+}
 ```
 
 ## Response Codes

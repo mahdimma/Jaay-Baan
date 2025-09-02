@@ -150,17 +150,3 @@ class LocationExportSerializer(serializers.ModelSerializer):
 
     def get_images_count(self, obj):
         return obj.images.count()
-
-
-class LocationImportSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=255)
-    location_type = serializers.ChoiceField(
-        choices=Location._meta.get_field("location_type").choices
-    )
-    description = serializers.CharField(required=False, allow_blank=True)
-    is_container = serializers.BooleanField(default=True)
-    barcode = serializers.CharField(required=False, allow_blank=True)
-    quantity = serializers.IntegerField(default=1)
-    value = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
-    cleaned_duration = serializers.IntegerField(default=30)
-    parent_id = serializers.IntegerField(required=False, allow_null=True)

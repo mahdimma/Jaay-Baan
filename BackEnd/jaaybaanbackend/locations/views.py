@@ -14,7 +14,6 @@ from .serializers import (
     LocationSearchSerializer,
     LocationImageSerializer,
     LocationExportSerializer,
-    LocationImportSerializer,
 )
 
 
@@ -430,66 +429,6 @@ def location_export(request):
             "exported_at": timezone.now(),
         }
     )
-
-
-@api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
-def location_import(request):
-    """Import locations data"""
-    if not isinstance(request.data, list):
-        return Response(
-            {"error": "Expected a list of location objects"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    results = {"total": len(request.data), "created": 0, "failed": [], "success": True}
-
-    for index, item in enumerate(request.data):
-        serializer = LocationImportSerializer(data=item)
-
-        if serializer.is_valid():
-            try:
-                validated_data = serializer.validated_data
-                parent_id = validated_data.pop("parent_id", None)
-
-                if parent_id:
-                    parent = Location.objects.get(id=parent_id)
-                    if not parent.is_container:
-                        results["failed"].append(
-                            {
-                                "index": index,
-                                "data": item,
-                                "error": "Parent location is not a container",
-                            }
-                        )
-                        continue
-
-                    location = Location(**validated_data)
-                    location.save()
-                    location.move(parent, pos="sorted-child")
-                else:
-                    # Create as root node
-                    location = Location.add_root(**validated_data)
-
-                results["created"] += 1
-
-            except Location.DoesNotExist:
-                results["failed"].append(
-                    {"index": index, "data": item, "error": "Parent location not found"}
-                )
-            except Exception as e:
-                results["failed"].append(
-                    {"index": index, "data": item, "error": str(e)}
-                )
-        else:
-            results["failed"].append(
-                {"index": index, "data": item, "error": serializer.errors}
-            )
-
-    if results["failed"]:
-        results["success"] = False
-
-    return Response(results)
 
 
 # Location Images Views

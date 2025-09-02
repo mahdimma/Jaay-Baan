@@ -1,5 +1,32 @@
+import re
 from django.db import models
 from treebeard.mp_tree import MP_Node
+
+
+def location_image_upload_path(instance, filename):
+    """
+    Generate a custom filename for location images.
+    Format: {location_id}_{location_name}_{location_image_id}.{extension}
+    """
+    # Get file extension
+    ext = filename.split(".")[-1].lower()
+
+    # Clean location name - remove special characters and spaces
+    clean_name = re.sub(r"[^\w\s-]", "", instance.location.name)
+    clean_name = re.sub(r"[-\s]+", "_", clean_name)
+
+    # If instance has an ID (updating existing image), use it
+    if instance.pk:
+        new_filename = f"{instance.location.id}_{clean_name}_{instance.pk}.{ext}"
+    else:
+        # For new images, get existing images count to determine the next number
+        existing_count = LocationImage.objects.filter(
+            location=instance.location
+        ).count()
+        new_number = existing_count + 1
+        new_filename = f"{instance.location.id}_{clean_name}_{new_number}.{ext}"
+
+    return f"location_images/{new_filename}"
 
 
 class Location(MP_Node):
@@ -109,7 +136,7 @@ class LocationImage(models.Model):
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, related_name="images"
     )
-    image = models.ImageField(upload_to="location_images/")
+    image = models.ImageField(upload_to=location_image_upload_path)
     description = models.CharField(max_length=255, blank=True, null=True)
     is_primary = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -120,3 +147,14 @@ class LocationImage(models.Model):
 
     def __str__(self):
         return f"{self.location.name} - Image"
+
+    def save(self, *args, **kwargs):
+        """
+        Override save to ensure only one primary image per location
+        """
+        if self.is_primary:
+            # Set all other images of this location to non-primary
+            LocationImage.objects.filter(
+                location=self.location, is_primary=True
+            ).exclude(pk=self.pk).update(is_primary=False)
+        super().save(*args, **kwargs)
