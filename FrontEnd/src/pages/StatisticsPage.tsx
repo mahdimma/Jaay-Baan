@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { useStatistics } from "../hooks/useApi";
+import { useStatistics, useLocations } from "../hooks/useApi";
 import { Icon, Button } from "../components/ui";
 import ExportDataModal from "../components/common/ExportDataModal";
 import {
@@ -12,22 +12,40 @@ import type { LocationType } from "../types";
 const StatisticsPage: React.FC = () => {
   const [isExportOpen, setIsExportOpen] = useState(false);
 
-  const { data: stats, isLoading, error } = useStatistics();
+  const { data: stats, isLoading: statsLoading, error } = useStatistics();
+  // Fetch all locations to calculate actual values
+  const { data: allLocations, isLoading: locationsLoading } = useLocations({
+    page_size: 10000,
+  }); // Large page size to get all locations
+
+  const isLoading = statsLoading || locationsLoading;
 
   React.useEffect(() => {
     // Animation trigger
   }, []);
 
   const memoizedData = useMemo(() => {
-    if (!stats) return null;
+    if (!stats || !allLocations) return { totalValue: 0, valuesByType: {} };
 
-    // Calculate estimated total value (simplified calculation)
-    const totalValue = Object.entries(stats.by_type).reduce((acc, [, info]) => {
-      return acc + info.count * 1; // Estimated average value per item
+    // Calculate actual total value from all locations
+    const totalValue = allLocations.results.reduce((sum, location) => {
+      const locationValue = Number(location.value) || 0;
+      return sum + locationValue;
     }, 0);
 
-    return { totalValue };
-  }, [stats]);
+    // Calculate values by type
+    const valuesByType: Record<string, number> = {};
+    allLocations.results.forEach((location) => {
+      const type = location.location_type;
+      if (!valuesByType[type]) {
+        valuesByType[type] = 0;
+      }
+      const locationValue = Number(location.value) || 0;
+      valuesByType[type] += locationValue;
+    });
+
+    return { totalValue, valuesByType };
+  }, [stats, allLocations]);
 
   if (isLoading) {
     return (
@@ -76,7 +94,7 @@ const StatisticsPage: React.FC = () => {
     return null;
   }
 
-  const { totalValue } = memoizedData;
+  const { totalValue, valuesByType } = memoizedData;
 
   return (
     <div className="min-h-screen">
@@ -347,13 +365,17 @@ const StatisticsPage: React.FC = () => {
                   کل ارزش تخمینی
                 </span>
                 <span className="text-3xl font-bold text-purple-600 animate-pulse">
-                  {formatCurrency(totalValue)}
+                  {formatCurrency(Number(totalValue) || 0)}
                 </span>
               </div>
               <div className="flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl border border-purple-100 hover:shadow-md transition-shadow duration-300">
                 <span className="text-gray-700 font-medium">میانگین ارزش</span>
                 <span className="text-3xl font-bold text-purple-600 animate-pulse">
-                  {formatCurrency(totalValue / stats.total_locations)}
+                  {formatCurrency(
+                    stats.total_locations > 0
+                      ? (Number(totalValue) || 0) / stats.total_locations
+                      : 0
+                  )}
                 </span>
               </div>
             </div>
@@ -439,7 +461,7 @@ const StatisticsPage: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-sm font-bold text-gray-900">
-                          {formatCurrency(info.count * 1)}
+                          {formatCurrency(Number(valuesByType[type]) || 0)}
                         </span>
                       </td>
                     </tr>

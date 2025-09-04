@@ -39,6 +39,7 @@ export type LocationType =
 export interface LocationTypeInfo {
   name: string;
   count: number;
+  total_value: number;
 }
 
 export interface Statistics {
@@ -48,6 +49,7 @@ export interface Statistics {
   locations_needing_cleaning: number;
   locations_with_images: number;
   locations_with_barcode: number;
+  total_value: number;
   by_type: Record<LocationType, LocationTypeInfo>;
 }
 
