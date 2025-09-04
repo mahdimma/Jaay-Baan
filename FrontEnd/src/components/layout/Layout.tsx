@@ -1,0 +1,88 @@
+import React, { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import { Button, Icon } from "../ui";
+
+const Layout: React.FC = () => {
+  // Start with sidebar closed on mobile, open on desktop
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    // Safe check for window object
+    if (typeof window !== "undefined") {
+      return window.innerWidth >= 1024;
+    }
+    return true; // Default to open on server-side
+  });
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // Handle window resize for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Main content area */}
+      <div
+        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+          !isSidebarOpen ? "mr-0" : "mr-64"
+        }`}
+      >
+        <main className="flex-1 overflow-x-hidden overflow-y-auto">
+          <div className="container mx-auto px-6 py-8">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+
+      {/* Sidebar */}
+      <div
+        className={`${
+          isSidebarOpen ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 ease-in-out fixed inset-y-0 right-0 z-50 w-64 lg:fixed lg:right-0 lg:translate-x-0 ${
+          !isSidebarOpen ? "lg:translate-x-full lg:w-64" : "lg:w-64"
+        }`}
+      >
+        <Sidebar />
+      </div>
+
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
+
+      {/* Toggle button - always visible and positioned dynamically on the right */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={toggleSidebar}
+        className={`fixed top-4 z-60 p-3 bg-white border border-gray-200 rounded-lg shadow-lg hover:bg-gray-50 transition-all duration-300 ${
+          isSidebarOpen ? "right-72 lg:right-72" : "right-4 lg:right-4"
+        }`}
+        aria-label="Toggle sidebar"
+      >
+        <Icon
+          name={isSidebarOpen ? "panel-right-close" : "panel-right-open"}
+          size={20}
+          className="text-gray-700"
+        />
+      </Button>
+    </div>
+  );
+};
+
+export default Layout;
