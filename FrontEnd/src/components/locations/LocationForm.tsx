@@ -95,7 +95,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
     if (initialData?.images) {
       setImages(initialData.images);
     }
-    
+
     // Reset form with initialData when editing
     if (isEdit && initialData) {
       reset({
@@ -159,12 +159,12 @@ const LocationForm: React.FC<LocationFormProps> = ({
       quantity: data.quantity || 1,
       cleaned_duration: data.cleaned_duration || 30,
     };
-    
+
     // Handle null value for empty value field
     if (data.value === undefined) {
       submitData.value = null;
     }
-    
+
     onSubmit(submitData);
 
     if (!isEdit) {
@@ -282,7 +282,9 @@ const LocationForm: React.FC<LocationFormProps> = ({
               min="0"
               {...register("value", {
                 setValueAs: (value) =>
-                  value === "" || value === null ? undefined : parseFloat(value) || undefined,
+                  value === "" || value === null
+                    ? undefined
+                    : parseFloat(value) || undefined,
               })}
               error={errors.value?.message}
               placeholder="ارزش (اختیاری)"
