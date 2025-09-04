@@ -19,18 +19,12 @@ const locationFormSchema = z.object({
   description: z.string().optional(),
   is_container: z.boolean(),
   barcode: z.string().optional(),
-  quantity: z.union([z.number().min(1, "تعداد باید حداقل 1 باشد"), z.nan()]).optional().transform((val) => {
-    if (typeof val === 'number' && !isNaN(val)) return val;
-    return undefined;
-  }),
-  value: z.union([z.number().min(0, "ارزش نمی‌تواند منفی باشد"), z.nan()]).optional().transform((val) => {
-    if (typeof val === 'number' && !isNaN(val)) return val;
-    return undefined;
-  }),
-  cleaned_duration: z.union([z.number().min(1, "فاصله زمانی تمیزکاری باید حداقل 1 روز باشد"), z.nan()]).optional().transform((val) => {
-    if (typeof val === 'number' && !isNaN(val)) return val;
-    return 30; // default value
-  }),
+  quantity: z.number().min(1, "تعداد باید حداقل 1 باشد").optional(),
+  value: z.number().min(0, "ارزش نمی‌تواند منفی باشد").optional(),
+  cleaned_duration: z
+    .number()
+    .min(1, "فاصله زمانی تمیزکاری باید حداقل 1 روز باشد")
+    .optional(),
 });
 
 type LocationFormData = z.infer<typeof locationFormSchema>;
@@ -74,9 +68,9 @@ const LocationForm: React.FC<LocationFormProps> = ({
       description: initialData?.description || "",
       is_container: initialData?.is_container || false,
       barcode: initialData?.barcode || "",
-      quantity: initialData?.quantity || 1,
-      value: initialData?.value || undefined,
-      cleaned_duration: initialData?.cleaned_duration || 30,
+      quantity: initialData?.quantity || undefined,
+      value: initialData?.value !== undefined ? initialData.value : undefined,
+      cleaned_duration: initialData?.cleaned_duration || undefined,
     },
   });
 
@@ -101,7 +95,21 @@ const LocationForm: React.FC<LocationFormProps> = ({
     if (initialData?.images) {
       setImages(initialData.images);
     }
-  }, [initialData]);
+    
+    // Reset form with initialData when editing
+    if (isEdit && initialData) {
+      reset({
+        name: initialData.name || "",
+        location_type: initialData.location_type || "item",
+        description: initialData.description || "",
+        is_container: initialData.is_container || false,
+        barcode: initialData.barcode || "",
+        quantity: initialData.quantity || undefined,
+        value: initialData.value !== undefined ? initialData.value : undefined,
+        cleaned_duration: initialData.cleaned_duration || undefined,
+      });
+    }
+  }, [initialData, isEdit, reset]);
 
   const handleImageUpload = async (files: FileList) => {
     if (!isEdit || !initialData?.id) {
@@ -145,12 +153,18 @@ const LocationForm: React.FC<LocationFormProps> = ({
   };
 
   const handleFormSubmit = (data: LocationFormData) => {
-    const submitData: CreateLocationData = {
+    const submitData: any = {
       ...data,
       parent_id: parentId,
       quantity: data.quantity || 1,
       cleaned_duration: data.cleaned_duration || 30,
     };
+    
+    // Handle null value for empty value field
+    if (data.value === undefined) {
+      submitData.value = null;
+    }
+    
     onSubmit(submitData);
 
     if (!isEdit) {
@@ -180,14 +194,37 @@ const LocationForm: React.FC<LocationFormProps> = ({
           <h3 className="text-lg font-medium text-gray-900">اطلاعات پایه</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {parentLocation && (
-              <Input
-                label="مکان والد"
-                value={parentLocation.name}
-                disabled
-                placeholder="مکان والد"
-              />
-            )}
+            {/* Always show parent field */}
+            <div className="w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                والد
+              </label>
+              <div className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm bg-gray-50 text-gray-600">
+                <div className="flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-2 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
+                  </svg>
+                  <span className="italic">
+                    {parentLocation
+                      ? parentLocation.name
+                      : "مکان اصلی (بدون والد)"}
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                این فیلد قابل تغییر نیست
+              </p>
+            </div>
 
             <Input
               label="نام مکان *"
@@ -229,7 +266,10 @@ const LocationForm: React.FC<LocationFormProps> = ({
               label="تعداد"
               type="number"
               min="1"
-              {...register("quantity", { valueAsNumber: true })}
+              {...register("quantity", {
+                setValueAs: (value) =>
+                  value === "" ? undefined : parseInt(value) || undefined,
+              })}
               error={errors.quantity?.message}
               placeholder="1"
             />
@@ -240,7 +280,10 @@ const LocationForm: React.FC<LocationFormProps> = ({
               label="ارزش (تومان)"
               type="number"
               min="0"
-              {...register("value", { valueAsNumber: true })}
+              {...register("value", {
+                setValueAs: (value) =>
+                  value === "" || value === null ? undefined : parseFloat(value) || undefined,
+              })}
               error={errors.value?.message}
               placeholder="ارزش (اختیاری)"
             />
@@ -249,7 +292,10 @@ const LocationForm: React.FC<LocationFormProps> = ({
               label="فاصله زمانی تمیزکاری (روز)"
               type="number"
               min="1"
-              {...register("cleaned_duration", { valueAsNumber: true })}
+              {...register("cleaned_duration", {
+                setValueAs: (value) =>
+                  value === "" ? 30 : parseInt(value) || 30,
+              })}
               error={errors.cleaned_duration?.message}
               placeholder="30"
             />
