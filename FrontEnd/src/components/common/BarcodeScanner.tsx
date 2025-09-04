@@ -21,7 +21,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   const [manualInput, setManualInput] = useState("");
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState("");
-  const [scanResult, setScanResult] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
@@ -29,7 +28,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   const startCamera = async () => {
     try {
       setError("");
-      setScanResult("");
       setIsScanning(true);
 
       // Initialize the barcode reader
@@ -55,7 +53,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
             (result, error) => {
               if (result) {
                 const scannedText = result.getText();
-                setScanResult(scannedText);
                 onScan(scannedText);
                 stopCamera();
                 onClose();
@@ -98,7 +95,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   const handleModalClose = () => {
     stopCamera();
     setManualInput("");
-    setScanResult("");
     setError("");
     onClose();
   };

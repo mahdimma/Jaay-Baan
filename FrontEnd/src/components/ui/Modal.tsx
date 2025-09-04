@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "../../lib/utils";
+import { useSidebarStore } from "../../store/sidebarStore";
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,6 +19,25 @@ const Modal: React.FC<ModalProps> = ({
   className,
   size = "md",
 }) => {
+  const { isSidebarOpen } = useSidebarStore();
+
+  // Handle ESC key press
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const sizes = {
@@ -29,7 +49,11 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4">
+      <div
+        className={`flex min-h-screen items-center justify-center p-4 transition-all duration-300 ${
+          isSidebarOpen ? "mr-64" : "mr-0"
+        }`}
+      >
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"

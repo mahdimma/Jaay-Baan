@@ -1,35 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { Button, Icon } from "../ui";
+import { useSidebarStore } from "../../store/sidebarStore";
 
 const Layout: React.FC = () => {
-  // Start with sidebar closed on mobile, open on desktop
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    // Safe check for window object
-    if (typeof window !== "undefined") {
-      return window.innerWidth >= 1024;
-    }
-    return true; // Default to open on server-side
-  });
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const { isSidebarOpen, setSidebarOpen, toggleSidebar } = useSidebarStore();
 
   // Handle window resize for responsive behavior
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        setIsSidebarOpen(true);
+        setSidebarOpen(true);
       } else {
-        setIsSidebarOpen(false);
+        setSidebarOpen(false);
       }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [setSidebarOpen]);
 
   return (
     <div className="flex h-screen bg-gray-100">
