@@ -22,7 +22,7 @@ const Layout: React.FC = () => {
   }, [setSidebarOpen]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {/* Main content area */}
       <div
         className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
@@ -50,7 +50,7 @@ const Layout: React.FC = () => {
       {/* Overlay for mobile */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 lg:hidden"
           onClick={toggleSidebar}
         />
       )}
@@ -60,7 +60,7 @@ const Layout: React.FC = () => {
         variant="ghost"
         size="sm"
         onClick={toggleSidebar}
-        className={`fixed top-4 z-60 p-3 bg-white border border-gray-200 rounded-lg shadow-lg hover:bg-gray-50 transition-all duration-300 ${
+        className={`fixed top-4 z-60 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 ${
           isSidebarOpen ? "right-72 lg:right-72" : "right-4 lg:right-4"
         }`}
         aria-label="Toggle sidebar"
@@ -68,7 +68,7 @@ const Layout: React.FC = () => {
         <Icon
           name={isSidebarOpen ? "panel-right-close" : "panel-right-open"}
           size={20}
-          className="text-gray-700"
+          className="text-gray-700 dark:text-gray-300"
         />
       </Button>
     </div>
