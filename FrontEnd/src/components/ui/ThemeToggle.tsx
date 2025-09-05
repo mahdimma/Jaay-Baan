@@ -58,7 +58,7 @@ const ThemeToggle = () => {
     <div className="flex items-center space-x-2">
       <button
         onClick={() => setTheme("light")}
-        className={`p-2 rounded-md ${
+        className={`p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white ${
           theme === "light" ? "bg-gray-200 dark:bg-gray-700" : ""
         }`}
         aria-label="Light mode"
@@ -79,7 +79,7 @@ const ThemeToggle = () => {
       </button>
       <button
         onClick={() => setTheme("dark")}
-        className={`p-2 rounded-md ${
+        className={`p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white ${
           theme === "dark" ? "bg-gray-200 dark:bg-gray-700" : ""
         }`}
         aria-label="Dark mode"
@@ -96,7 +96,7 @@ const ThemeToggle = () => {
       </button>
       <button
         onClick={() => setTheme("system")}
-        className={`p-2 rounded-md ${
+        className={`p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white ${
           theme === "system" ? "bg-gray-200 dark:bg-gray-700" : ""
         }`}
         aria-label="System theme"

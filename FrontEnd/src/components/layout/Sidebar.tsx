@@ -26,8 +26,14 @@ const Sidebar: React.FC = () => {
       {/* Header with logo */}
       <div className="flex items-center px-4 mb-6">
         <Link to="/" className="flex items-center space-x-2 space-x-reverse">
-          <Icon name="layers" className="text-primary-600 dark:text-primary-400" size={32} />
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">جای بان</span>
+          <Icon
+            name="layers"
+            className="text-primary-600 dark:text-white"
+            size={32}
+          />
+          <span className="text-2xl font-bold text-gray-900 dark:text-white mr-1">
+            جای بان
+          </span>
         </Link>
       </div>
 
@@ -39,7 +45,9 @@ const Sidebar: React.FC = () => {
               key={item.path}
               to={item.path}
               className={`flex items-center px-4 py-2 mt-5 text-gray-600 dark:text-gray-300 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white ${
-                location.pathname === item.path ? "bg-gray-100 dark:bg-gray-700" : ""
+                location.pathname === item.path
+                  ? "bg-gray-100 dark:bg-gray-700"
+                  : ""
               }`}
             >
               <Icon name={item.icon} size={20} />
@@ -57,7 +65,11 @@ const Sidebar: React.FC = () => {
 
           <div className="flex items-center px-4 py-2 mb-3 bg-gray-200 dark:bg-gray-700 rounded-lg">
             <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-              <Icon name="user" size={14} className="text-blue-600 dark:text-blue-400" />
+              <Icon
+                name="user"
+                size={14}
+                className="text-blue-600 dark:text-blue-400"
+              />
             </div>
             <span className="text-sm font-medium text-gray-800 dark:text-gray-200 mr-3">
               {user?.username}
