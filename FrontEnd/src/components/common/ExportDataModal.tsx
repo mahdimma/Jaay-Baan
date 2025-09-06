@@ -80,7 +80,7 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
       <div className="space-y-6">
         {/* Format Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             فرمت فایل
           </label>
           <div className="grid grid-cols-2 gap-3">
@@ -89,15 +89,15 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
                 setOptions((prev) => ({ ...prev, format: "json" }))
               }
               className={cn(
-                "p-4 border rounded-lg text-center transition-colors",
+                "p-4 border rounded-lg text-center transition-colors dark:text-gray-300",
                 options.format === "json"
-                  ? "border-primary-500 bg-primary-50 text-primary-700"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-primary-500 bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-gray-300"
+                  : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
               )}
             >
               <Icon name="file-text" size={24} className="mx-auto mb-2" />
               <div className="font-medium">JSON</div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
                 فرمت کامل با تمام جزئیات
               </div>
             </button>
@@ -105,22 +105,24 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
             <button
               onClick={() => setOptions((prev) => ({ ...prev, format: "csv" }))}
               className={cn(
-                "p-4 border rounded-lg text-center transition-colors",
+                "p-4 border rounded-lg text-center transition-colors dark:text-gray-300",
                 options.format === "csv"
-                  ? "border-primary-500 bg-primary-50 text-primary-700"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-primary-500 bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-gray-300"
+                  : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
               )}
             >
               <Icon name="bar-chart" size={24} className="mx-auto mb-2" />
               <div className="font-medium">CSV</div>
-              <div className="text-xs text-gray-500">فرمت جدولی برای اکسل</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                فرمت جدولی برای اکسل
+              </div>
             </button>
           </div>
         </div>
 
         {/* Options */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             گزینه‌های اضافی
           </label>
           <div className="space-y-3">
@@ -134,9 +136,9 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
                     includeImages: e.target.checked,
                   }))
                 }
-                className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
               />
-              <span className="mr-3 text-sm text-gray-700">
+              <span className="mr-3 text-sm text-gray-700 dark:text-gray-300">
                 شامل اطلاعات تصاویر
               </span>
             </label>
@@ -151,16 +153,18 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
                     includeStatistics: e.target.checked,
                   }))
                 }
-                className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
               />
-              <span className="mr-3 text-sm text-gray-700">شامل آمار کلی</span>
+              <span className="mr-3 text-sm text-gray-700 dark:text-gray-300">
+                شامل آمار کلی
+              </span>
             </label>
           </div>
         </div>
 
         {/* Type Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             فیلتر براساس نوع (اختیاری)
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -185,23 +189,25 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
                       }));
                     }
                   }}
-                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
                 />
-                <span className="mr-2 text-sm text-gray-700">{type.label}</span>
+                <span className="mr-2 text-sm text-gray-700 dark:text-gray-300">
+                  {type.label}
+                </span>
               </label>
             ))}
           </div>
         </div>
 
         {/* Export Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
           <div className="flex items-start">
             <Icon
               name="alert-circle"
-              className="text-blue-600 mt-0.5 ml-3"
+              className="text-blue-600 dark:text-blue-400 mt-0.5 ml-3"
               size={16}
             />
-            <div className="text-sm text-blue-800">
+            <div className="text-sm text-blue-800 dark:text-blue-200">
               <p className="font-medium mb-1">نکات مهم:</p>
               <ul className="list-disc list-inside space-y-1">
                 <li>
@@ -215,8 +221,9 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end space-x-3 space-x-reverse pt-4 border-t">
+        <div className="flex justify-end space-x-3 space-x-reverse pt-4 border-t border-gray-200 dark:border-gray-700">
           <Button
+            className="ml-2"
             variant="outline"
             onClick={onClose}
             disabled={exportMutation.isPending}

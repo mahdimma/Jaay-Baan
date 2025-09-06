@@ -233,11 +233,15 @@ const HomePage: React.FC = () => {
   const renderEmptyState = useCallback(
     () => (
       <div className="text-center py-16">
-        <Icon name="package" size={64} className="mx-auto text-gray-300 mb-6" />
-        <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+        <Icon
+          name="package"
+          size={64}
+          className="mx-auto text-gray-300 dark:text-gray-600 mb-6"
+        />
+        <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
           مکانی موجود نیست
         </h3>
-        <p className="text-lg text-gray-500 mb-6">
+        <p className="text-lg text-gray-500 dark:text-gray-400 mb-6">
           شروع کنید با ایجاد اولین مکان
         </p>
         <Button
@@ -255,11 +259,13 @@ const HomePage: React.FC = () => {
   return (
     <div className="p-6">
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
           <div className="mb-4 lg:mb-0">
-            <h1 className="text-3xl font-bold text-gray-900">مدیریت مکان‌ها</h1>
-            <p className="mt-2 text-lg text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              مدیریت مکان‌ها
+            </h1>
+            <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
               مدیریت و سازماندهی اشیاء فیزیکی شما
             </p>
           </div>
@@ -276,13 +282,13 @@ const HomePage: React.FC = () => {
             </Button>
 
             {/* View Toggle */}
-            <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+            <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
               <button
                 onClick={() => updateUiState({ view: "tree" })}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   uiState.view === "tree"
-                    ? "bg-blue-100 text-blue-700 border-blue-300"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 <Icon name="list" size={14} className="mr-1" />
@@ -290,10 +296,10 @@ const HomePage: React.FC = () => {
               </button>
               <button
                 onClick={() => updateUiState({ view: "grid" })}
-                className={`px-4 py-2 text-sm font-medium border-r border-gray-300 transition-colors ${
+                className={`px-4 py-2 text-sm font-medium border-r border-gray-300 dark:border-gray-600 transition-colors ${
                   uiState.view === "grid"
-                    ? "bg-blue-100 text-blue-700 border-blue-300"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 <Icon name="grid" size={14} className="mr-1" />
@@ -353,8 +359,8 @@ const HomePage: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         {/* Tree Sidebar */}
         <div className="xl:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
               درخت مکان‌ها
             </h2>
             {treeLoading ? (
@@ -377,12 +383,12 @@ const HomePage: React.FC = () => {
             renderEmptyState()
           ) : uiState.view === "tree" ? (
             /* Tree View */
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   {selectedLocation ? selectedLocation.name : "همه مکان‌ها"}
                 </h2>
-                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
                   {locations.length} مورد
                 </span>
               </div>

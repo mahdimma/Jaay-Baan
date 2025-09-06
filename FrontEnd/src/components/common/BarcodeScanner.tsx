@@ -110,18 +110,18 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       <div className="space-y-6">
         {/* Camera Scanner */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
             اسکن با دوربین
           </h3>
 
           {!isScanning ? (
-            <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+            <div className="text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
               <Icon
                 name="camera"
                 size={48}
-                className="mx-auto text-gray-400 mb-4"
+                className="mx-auto text-gray-400 dark:text-gray-500 mb-4"
               />
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 برای اسکن بارکد، دوربین را روشن کنید
               </p>
               <Button
@@ -170,7 +170,7 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
           )}
 
           {error && (
-            <div className="mt-4 flex items-center text-red-600 text-sm">
+            <div className="mt-4 flex items-center text-red-600 dark:text-red-400 text-sm">
               <Icon name="alert-circle" size={16} className="ml-2" />
               {error}
             </div>
@@ -178,19 +178,18 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
         </div>
 
         {/* Manual Input */}
-        <div className="border-t pt-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white  mb-4">
             ورود دستی بارکد
           </h3>
 
-          <form onSubmit={handleManualSubmit} className="space-y-4">
+          <form onSubmit={handleManualSubmit} className="space-y-4 ">
             <Input
-              label="کد بارکد"
               type="text"
               value={manualInput}
               onChange={(e) => setManualInput(e.target.value)}
               placeholder="بارکد یا کد محصول را وارد کنید"
-              className="font-mono"
+              className="dark:text-white"
             />
 
             <div className="flex justify-end space-x-3 space-x-reverse">
@@ -209,9 +208,11 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
         </div>
 
         {/* Instructions */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h4 className="font-medium text-gray-900 mb-2">راهنمای استفاده:</h4>
-          <ul className="text-sm text-gray-600 space-y-1">
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+          <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+            راهنمای استفاده:
+          </h4>
+          <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
             <li>• بارکد را در مرکز کادر قرار دهید</li>
             <li>• از فاصله مناسب (10-30 سانتی‌متر) نگه دارید</li>
             <li>• محیط نور کافی داشته باشد</li>

@@ -12,17 +12,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             {label}
           </label>
         )}
         <input
           type={type}
           className={cn(
-            "w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500",
+            "w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white",
             error
-              ? "border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500"
-              : "border-gray-300",
+              ? "border-red-300 dark:border-red-600 text-red-900 dark:text-red-100 placeholder-red-300 dark:placeholder-red-400 focus:ring-red-500 focus:border-red-500"
+              : "border-gray-300 dark:border-gray-600",
             className
           )}
           ref={ref}
@@ -30,7 +30,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         />
         {error && <p className="form-error">{error}</p>}
         {helperText && !error && (
-          <p className="text-gray-500 text-sm mt-1">{helperText}</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            {helperText}
+          </p>
         )}
       </div>
     );

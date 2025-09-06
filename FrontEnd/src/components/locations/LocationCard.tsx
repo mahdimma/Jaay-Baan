@@ -65,10 +65,10 @@ const LocationCard: React.FC<LocationCardProps> = ({
   return (
     <>
       <div
-        className={`bg-white rounded-lg shadow-sm border transition-all hover:shadow-md ${
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border transition-all hover:shadow-md ${
           isSelected
-            ? "ring-2 ring-primary-500 border-primary-200"
-            : "border-gray-200"
+            ? "ring-2 ring-primary-500 border-primary-200 dark:border-primary-600"
+            : "border-gray-200 dark:border-gray-700"
         } ${!showSelection ? "cursor-pointer" : ""}`}
         onClick={handleCardClick}
       >
@@ -103,12 +103,14 @@ const LocationCard: React.FC<LocationCardProps> = ({
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Icon
                   name={locationTypeIcon as any}
-                  className="text-primary-600"
+                  className="text-primary-600 dark:text-gray-400"
                   size={20}
                 />
                 <div>
-                  <h3 className="font-medium text-gray-900">{location.name}</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3 className="font-medium text-gray-900 dark:text-white">
+                    {location.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {locationTypeLabels[location.location_type]}
                   </p>
                 </div>
@@ -117,20 +119,20 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
             <div className="flex items-center space-x-2 space-x-reverse">
               {location.needs_cleaning && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200">
                   <Icon name="alert-circle" size={12} className="ml-1" />
                   نیاز به تمیزکاری
                 </span>
               )}
 
               {location.is_container && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                   ظرف ({location.children_count})
                 </span>
               )}
 
               {location.images && location.images.length > 0 && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
                   <Icon name="camera" size={12} className="ml-1" />
                   {location.images.length}
                 </span>
@@ -140,14 +142,14 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
           {/* Breadcrumb */}
           {location.breadcrumb && (
-            <div className="text-xs text-gray-500 mb-2 truncate">
+            <div className="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate">
               {location.breadcrumb}
             </div>
           )}
 
           {/* Description */}
           {location.description && !compact && (
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
               {location.description}
             </p>
           )}
@@ -156,8 +158,12 @@ const LocationCard: React.FC<LocationCardProps> = ({
           <div className="space-y-2 mb-3">
             {location.barcode && (
               <div className="flex items-center space-x-2 space-x-reverse text-sm">
-                <Icon name="tag" size={14} className="text-gray-400" />
-                <span className="text-gray-600 font-mono">
+                <Icon
+                  name="tag"
+                  size={14}
+                  className="text-gray-400 dark:text-gray-500"
+                />
+                <span className="text-gray-600 dark:text-gray-300 font-mono">
                   {location.barcode}
                 </span>
               </div>
@@ -166,8 +172,10 @@ const LocationCard: React.FC<LocationCardProps> = ({
             <div className="grid grid-cols-2 gap-2 text-xs">
               {location.value && (
                 <div>
-                  <span className="text-gray-500">ارزش:</span>
-                  <span className="font-medium text-gray-900 mr-1">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    ارزش:
+                  </span>
+                  <span className="font-medium text-gray-900 dark:text-white mr-1">
                     {new Intl.NumberFormat("fa-IR").format(location.value)} ت
                   </span>
                 </div>
@@ -175,8 +183,10 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
               {location.quantity > 1 && (
                 <div>
-                  <span className="text-gray-500">تعداد:</span>
-                  <span className="font-medium text-gray-900 mr-1">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    تعداد:
+                  </span>
+                  <span className="font-medium text-gray-900 dark:text-white mr-1">
                     {location.quantity}
                   </span>
                 </div>
@@ -184,8 +194,10 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
               {location.cleaned_time && (
                 <div className="col-span-2">
-                  <span className="text-gray-500">آخرین تمیزکاری:</span>
-                  <span className="mr-1 text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    آخرین تمیزکاری:
+                  </span>
+                  <span className="mr-1 text-gray-900 dark:text-white">
                     {formatDate(location.cleaned_time)}
                   </span>
                 </div>

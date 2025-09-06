@@ -87,9 +87,18 @@ body {
   background-color: #f1f5f9;
 }
 
+:is(.dark .tree-item:hover) {
+  background-color: #374151;
+}
+
 .tree-item.selected {
   background-color: #dbeafe;
   border-right: 3px solid #3b82f6;
+}
+
+:is(.dark .tree-item.selected) {
+  background-color: #1e3a8a;
+  border-right: 3px solid #60a5fa;
 }
 
 /* Form styles */

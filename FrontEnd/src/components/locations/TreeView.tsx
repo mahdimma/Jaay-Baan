@@ -51,12 +51,12 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
                 e.stopPropagation();
                 onToggle?.(node.id);
               }}
-              className="p-0.5 hover:bg-gray-200 rounded"
+              className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
             >
               <Icon
                 name={isExpanded ? "chevron-down" : "chevron-right"}
                 size={14}
-                className="text-gray-400"
+                className="text-gray-400 dark:text-gray-500"
               />
             </button>
           )}
@@ -66,18 +66,18 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
         <Icon
           name={locationTypeIcon as any}
           size={16}
-          className="text-primary-600 ml-2"
+          className="text-primary-600 dark:text-gray-400 ml-2"
         />
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900 truncate">
+            <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
               {node.name}
             </span>
             <div className="flex items-center space-x-2 space-x-reverse mr-2">
               {node.is_container && node.children_count > 0 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   ({node.children_count})
                 </span>
               )}
@@ -85,12 +85,12 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
                 <Icon
                   name="alert-circle"
                   size={12}
-                  className="text-orange-500"
+                  className="text-orange-500 dark:text-orange-400"
                 />
               )}
             </div>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             {locationTypeLabels[node.location_type]}
           </div>
         </div>
@@ -148,8 +148,12 @@ const TreeView: React.FC<TreeViewProps> = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        <Icon name="layers" size={48} className="mx-auto mb-2 text-gray-300" />
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+        <Icon
+          name="layers"
+          size={48}
+          className="mx-auto mb-2 text-gray-300 dark:text-gray-600"
+        />
         <p>هیچ مکانی یافت نشد</p>
       </div>
     );

@@ -69,9 +69,15 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
     return (
       <div key={node.id}>
         <div
-          className={`tree-item flex items-center py-2 px-3 cursor-pointer rounded-md ${
-            isSelected ? "bg-primary-100 border-primary-500" : ""
-          } ${!canMove ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"}`}
+          className={`tree-item flex items-center py-2 px-3 cursor-pointer rounded-md group ${
+            isSelected
+              ? "bg-primary-100 dark:bg-primary-900 border-primary-500"
+              : ""
+          } ${
+            !canMove
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-gray-50 dark:hover:bg-gray-700"
+          }`}
           style={{ marginRight: `${level * 20}px` }}
           onClick={() => canMove && setSelectedParentId(node.id)}
         >
@@ -83,12 +89,12 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
                   e.stopPropagation();
                   toggleNode(node.id);
                 }}
-                className="p-0.5 hover:bg-gray-200 rounded"
+                className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
               >
                 <Icon
                   name={isExpanded ? "chevron-down" : "chevron-right"}
                   size={14}
-                  className="text-gray-400"
+                  className="text-gray-400 dark:text-gray-500 "
                 />
               </button>
             )}
@@ -98,8 +104,8 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
           <Icon
             name={node.is_container ? "package" : "tag"}
             size={16}
-            className={`text-primary-600 ml-2 ${
-              !canMove ? "text-gray-400" : ""
+            className={`text-primary-600 dark:text-white dark:group-hover:text-black ml-2 ${
+              !canMove ? "text-gray-400 dark:text-gray-500" : ""
             }`}
           />
 
@@ -107,16 +113,22 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
           <div className="flex-1 min-w-0">
             <span
               className={`text-sm font-medium truncate ${
-                !canMove ? "text-gray-400" : "text-gray-900"
+                !canMove
+                  ? "text-gray-400 dark:text-gray-500"
+                  : "text-gray-900 dark:text-white dark:group-hover:text-black"
               }`}
             >
               {node.name}
             </span>
             {!canMove && node.id === location?.id && (
-              <span className="text-xs text-red-500 mr-2">(همین مکان)</span>
+              <span className="text-xs text-red-500 dark:text-red-400 mr-2">
+                (همین مکان)
+              </span>
             )}
             {!canMove && !node.is_container && (
-              <span className="text-xs text-gray-500 mr-2">(غیر ظرف)</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 mr-2">
+                (غیر ظرف)
+              </span>
             )}
           </div>
         </div>
@@ -142,38 +154,48 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
     >
       <div className="space-y-6">
         {/* Current Location Info */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="font-medium text-gray-900 mb-2">مکان فعلی:</h3>
-          <p className="text-sm text-gray-600">{location.breadcrumb}</p>
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+          <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+            مکان فعلی:
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            {location.breadcrumb}
+          </p>
         </div>
 
         {/* Root Option */}
         <div>
-          <h3 className="font-medium text-gray-900 mb-3">انتخاب مکان مقصد:</h3>
+          <h3 className="font-medium text-gray-900 dark:text-white mb-3">
+            انتخاب مکان مقصد:
+          </h3>
 
           <div
-            className={`tree-item flex items-center py-2 px-3 cursor-pointer rounded-md mb-3 ${
+            className={`tree-item flex items-center py-2 px-3 cursor-pointer rounded-md mb-3 group ${
               selectedParentId === null
-                ? "bg-primary-100 border-primary-500"
-                : "hover:bg-gray-50"
+                ? "bg-primary-100 dark:bg-primary-900 border-primary-500"
+                : "hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
             onClick={() => setSelectedParentId(null)}
           >
-            <Icon name="home" size={16} className="text-primary-600 ml-2" />
-            <span className="text-sm font-medium text-gray-900">
+            <Icon
+              name="home"
+              size={16}
+              className="text-primary-600 dark:text-primary-400 ml-2"
+            />
+            <span className="text-sm font-medium text-gray-900 dark:text-white dark:group-hover:text-black">
               ریشه (بدون والد)
             </span>
           </div>
         </div>
 
         {/* Tree View */}
-        <div className="border rounded-lg p-3 max-h-64 overflow-y-auto">
+        <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 max-h-64 overflow-y-auto">
           {treeLoading ? (
             <Loading text="بارگذاری درخت مکان‌ها..." />
           ) : treeData && treeData.length > 0 ? (
             <div>{treeData.map((node) => renderTreeNode(node))}</div>
           ) : (
-            <div className="text-center py-4 text-gray-500">
+            <div className="text-center py-4 text-gray-500 dark:text-gray-400">
               مکانی برای انتخاب موجود نیست
             </div>
           )}
@@ -181,14 +203,14 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
 
         {/* Selected Location Preview */}
         {selectedParentId && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
             <div className="flex items-start">
               <Icon
                 name="alert-circle"
-                className="text-blue-600 mt-0.5 ml-3"
+                className="text-blue-600 dark:text-blue-400 mt-0.5 ml-3"
                 size={16}
               />
-              <div className="text-sm text-blue-800">
+              <div className="text-sm text-blue-800 dark:text-blue-200">
                 <p className="font-medium">مکان انتخاب شده:</p>
                 <p>
                   {treeData &&
@@ -213,8 +235,13 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
         )}
 
         {/* Actions */}
-        <div className="flex justify-end space-x-3 space-x-reverse pt-4 border-t">
-          <Button variant="outline" onClick={onClose} disabled={isLoading}>
+        <div className="flex justify-end space-x-3 space-x-reverse pt-4 border-t border-gray-200 dark:border-gray-700">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isLoading}
+            className="ml-2"
+          >
             انصراف
           </Button>
           <Button
