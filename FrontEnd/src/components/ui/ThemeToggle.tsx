@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const ThemeToggle = () => {
   const [theme, setTheme] = useState("system"); // 'light', 'dark', or 'system'
