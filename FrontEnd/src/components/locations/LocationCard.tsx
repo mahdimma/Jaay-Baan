@@ -103,12 +103,13 @@ const LocationCard: React.FC<LocationCardProps> = ({
     detailed: "shadow-md hover:shadow-xl",
   };
 
-  // Minimal card render
+  // Minimal card render - Fixed Layout
   if (variant === "minimal") {
     return (
       <div
         className={cn(
-          "bg-white dark:bg-gray-800 rounded-lg border-l-4 border-l-primary-500 border-r border-t border-b border-gray-200 dark:border-gray-700 transition-all duration-300 group cursor-pointer h-full relative overflow-hidden",
+          "bg-white dark:bg-gray-800 rounded-lg border-l-4 border-l-primary-500 border-r border-t border-b border-gray-200 dark:border-gray-700 transition-all duration-300 group cursor-pointer relative overflow-hidden",
+          "h-[280px] w-full flex flex-col", // Fixed height and layout
           isSelected
             ? "ring-2 ring-primary-500 shadow-lg"
             : "hover:shadow-md hover:border-primary-300"
@@ -116,8 +117,8 @@ const LocationCard: React.FC<LocationCardProps> = ({
         onClick={handleCardClick}
       >
         <div className="p-3 h-full flex flex-col">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-3">
+          {/* Fixed Header - 60px */}
+          <div className="h-[30px] flex items-start justify-between mb-3 flex-shrink-0">
             <div className="flex items-start space-x-2 space-x-reverse flex-1 min-w-0">
               {showSelection && (
                 <Checkbox
@@ -143,8 +144,8 @@ const LocationCard: React.FC<LocationCardProps> = ({
               </div>
             </div>
 
-            {/* Compact status indicators */}
-            <div className="flex flex-col items-end space-y-1 flex-shrink-0">
+            {/* Fixed status indicators */}
+            <div className="flex flex-col items-end space-y-1 flex-shrink-0 w-[40px]">
               {location.needs_cleaning && (
                 <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
               )}
@@ -156,56 +157,78 @@ const LocationCard: React.FC<LocationCardProps> = ({
             </div>
           </div>
 
-          {/* Quick info */}
-          <div className="flex-1 space-y-2 text-xs">
-            {location.barcode && (
-              <div className="flex items-center space-x-1 space-x-reverse text-gray-600 dark:text-gray-400">
+          {/* Fixed Barcode Section - 20px */}
+          <div className="h-[20px] flex-shrink-0 mb-2">
+            {location.barcode ? (
+              <div className="flex items-center space-x-1 space-x-reverse text-gray-600 dark:text-gray-400 text-xs">
                 <Icon name="tag" size={10} />
                 <span className="font-mono truncate">{location.barcode}</span>
               </div>
+            ) : (
+              <div></div>
             )}
+          </div>
 
-            {location.breadcrumb && (
-              <div className="flex items-center space-x-1 space-x-reverse text-gray-500 dark:text-gray-400">
+          {/* Fixed Breadcrumb Section - 20px */}
+          <div className="h-[20px] flex-shrink-0 mb-3">
+            {location.breadcrumb ? (
+              <div className="flex items-center space-x-1 space-x-reverse text-gray-500 dark:text-gray-400 text-xs">
                 <Icon name="map-pin" size={10} />
                 <span className="truncate">{location.breadcrumb}</span>
               </div>
+            ) : (
+              <div></div>
             )}
+          </div>
 
-            {/* Value and quantity in one row */}
-            <div className="grid grid-cols-2 gap-2">
-              {location.value && (
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded p-2">
-                  <div className="flex items-center space-x-1 space-x-reverse">
-                    <Icon name="star" size={10} className="text-green-600" />
-                    <span className="text-xs text-gray-600 dark:text-gray-400">
-                      ارزش
+          {/* Fixed Value/Quantity Grid - 60px */}
+          <div className="h-[60px] flex-shrink-0 mb-3">
+            <div className="grid grid-cols-2 gap-2 h-full">
+              {/* Value Section */}
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded p-2 flex flex-col justify-center">
+                {location.value ? (
+                  <>
+                    <div className="flex items-center space-x-1 space-x-reverse mb-1">
+                      <Icon name="star" size={10} className="text-green-600" />
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        ارزش
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                      {formatCurrency(location.value)}
                     </span>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <span className="text-xs text-gray-400">ارزش نامشخص</span>
                   </div>
-                  <span className="text-xs font-bold text-gray-900 dark:text-white block truncate">
-                    {formatCurrency(location.value)}
+                )}
+              </div>
+
+              {/* Quantity Section */}
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded p-2 flex flex-col justify-center">
+                <div className="flex items-center space-x-1 space-x-reverse mb-1">
+                  <Icon name="list" size={10} className="text-blue-600" />
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    تعداد
                   </span>
                 </div>
-              )}
-
-              {location.quantity > 1 && (
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded p-2">
-                  <div className="flex items-center space-x-1 space-x-reverse">
-                    <Icon name="list" size={10} className="text-blue-600" />
-                    <span className="text-xs text-gray-600 dark:text-gray-400">
-                      تعداد
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-gray-900 dark:text-white">
-                    {new Intl.NumberFormat("fa-IR").format(location.quantity)}
-                  </span>
-                </div>
-              )}
+                <span className="text-xs font-bold text-gray-900 dark:text-white">
+                  {new Intl.NumberFormat("fa-IR").format(location.quantity)}
+                </span>
+              </div>
             </div>
+          </div>
 
-            {/* Cleaning status */}
-            {location.cleaned_time && (
-              <div className={cn("p-2 rounded", getStatusColor())}>
+          {/* Fixed Cleaning Status - 35px */}
+          <div className="h-[25px] flex-shrink-0 mb-1">
+            {location.cleaned_time ? (
+              <div
+                className={cn(
+                  "p-2 rounded h-full flex items-center",
+                  getStatusColor()
+                )}
+              >
                 <div className="flex items-center space-x-1 space-x-reverse">
                   <Icon
                     name={
@@ -224,52 +247,60 @@ const LocationCard: React.FC<LocationCardProps> = ({
                   </span>
                 </div>
               </div>
+            ) : (
+              <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded h-full flex items-center">
+                <span className="text-xs text-gray-400">
+                  بدون برنامه تمیزکاری
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Bottom actions */}
-          {showActions && (
-            <div className="border-t border-gray-100 dark:border-gray-700 pt-2 mt-2">
-              <div className="flex items-center justify-between">
-                <div className="flex space-x-1 space-x-reverse">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEdit?.(location);
-                    }}
-                  >
-                    <Icon name="edit" size={12} />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onMove?.(location);
-                    }}
-                    className="ml-1"
-                  >
-                    <Icon name="move" size={12} />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete();
-                    }}
-                  >
-                    <Icon name="trash" size={12} />
-                  </Button>
+          {/* Fixed Actions Footer - Auto height */}
+          <div className="flex-1 flex flex-col justify-end">
+            {showActions && (
+              <div className="border-t border-gray-100 dark:border-gray-700 pt-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex space-x-1 space-x-reverse">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit?.(location);
+                      }}
+                    >
+                      <Icon name="edit" size={12} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onMove?.(location);
+                      }}
+                      className="ml-1"
+                    >
+                      <Icon name="move" size={12} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete();
+                      }}
+                    >
+                      <Icon name="trash" size={12} />
+                    </Button>
+                  </div>
+                  <span className="text-xs text-gray-400 font-mono">
+                    #{location.id}
+                  </span>
                 </div>
-                <span className="text-xs text-gray-400 font-mono">
-                  #{location.id}
-                </span>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );
@@ -335,8 +366,8 @@ const LocationCard: React.FC<LocationCardProps> = ({
         )}
 
         <div className={cn("p-4", compact && "p-3")}>
-          {/* Enhanced Header with better spacing and typography */}
-          <div className="flex items-start justify-between mb-4">
+          {/* Fixed Header Section - 80px */}
+          <div className="h-[80px] flex items-start justify-between mb-4 flex-shrink-0">
             <div className="flex items-start space-x-3 space-x-reverse flex-1">
               {showSelection && (
                 <div className="mt-1.5">
@@ -375,19 +406,27 @@ const LocationCard: React.FC<LocationCardProps> = ({
                     {locationTypeLabels[location.location_type]}
                   </p>
 
-                  {/* Enhanced Breadcrumb */}
-                  {location.breadcrumb && (
-                    <div className="text-xs text-gray-400 dark:text-gray-500 truncate font-medium">
-                      <Icon name="map-pin" size={10} className="inline ml-1" />
-                      {location.breadcrumb}
-                    </div>
-                  )}
+                  {/* Fixed Breadcrumb */}
+                  <div className="h-[16px] flex items-center">
+                    {location.breadcrumb ? (
+                      <div className="text-xs text-gray-400 dark:text-gray-500 truncate font-medium">
+                        <Icon
+                          name="map-pin"
+                          size={10}
+                          className="inline ml-1"
+                        />
+                        {location.breadcrumb}
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Status Badges - Redesigned */}
-            <div className="flex flex-col items-end space-y-1 flex-shrink-0">
+            {/* Fixed Status Badges Section - 80px width */}
+            <div className="w-[80px] flex flex-col items-end space-y-1 flex-shrink-0">
               {location.needs_cleaning && (
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 text-orange-800 dark:text-orange-200 border border-orange-200 dark:border-orange-800">
                   <Icon name="alert-circle" size={12} className="ml-1" />
@@ -413,95 +452,120 @@ const LocationCard: React.FC<LocationCardProps> = ({
             </div>
           </div>
 
-          {/* Enhanced Description */}
-          {location.description && !compact && (
-            <div className="mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
-                {location.description}
-              </p>
-            </div>
-          )}
+          {/* Fixed Description Section - 60px */}
+          <div className="h-[60px] mb-4 flex-shrink-0">
+            {location.description && !compact ? (
+              <div className="h-full">
+                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
+                  {location.description}
+                </p>
+              </div>
+            ) : (
+              <div className="h-full flex items-center">
+                <span className="text-sm text-gray-400 dark:text-gray-500 italic">
+                  توضیحات ندارد
+                </span>
+              </div>
+            )}
+          </div>
 
-          {/* Enhanced Details Grid */}
-          <div className="space-y-3 mb-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Value */}
-              {location.value && (
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
-                  <div className="flex items-center space-x-2 space-x-reverse">
-                    <Icon
-                      name="star"
-                      size={14}
-                      className="text-green-600 dark:text-green-400"
-                    />
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                      ارزش کل
-                    </span>
+          {/* Fixed Details Grid Section - 120px */}
+          <div className="h-[120px] mb-4 flex-shrink-0">
+            <div className="h-full flex flex-col space-y-3">
+              {/* Value and Quantity Grid - 80px */}
+              <div className="h-[80px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 h-full">
+                  {/* Value */}
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600 flex flex-col justify-center">
+                    {location.value ? (
+                      <>
+                        <div className="flex items-center space-x-2 space-x-reverse mb-1">
+                          <Icon
+                            name="star"
+                            size={14}
+                            className="text-green-600 dark:text-green-400"
+                          />
+                          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                            ارزش کل
+                          </span>
+                        </div>
+                        <span className="font-bold text-lg text-gray-900 dark:text-white truncate">
+                          {formatCurrency(location.value)}
+                        </span>
+                      </>
+                    ) : (
+                      <div className="text-center">
+                        <Icon
+                          name="star"
+                          size={20}
+                          className="text-gray-400 mx-auto mb-1"
+                        />
+                        <span className="text-xs text-gray-400">
+                          ارزش نامشخص
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <div className="mt-1">
-                    <span className="font-bold text-lg text-gray-900 dark:text-white">
-                      {formatCurrency(location.value)}
-                    </span>
-                  </div>
-                </div>
-              )}
 
-              {/* Quantity */}
-              {location.quantity > 1 && (
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
-                  <div className="flex items-center space-x-2 space-x-reverse">
-                    <Icon
-                      name="list"
-                      size={14}
-                      className="text-blue-600 dark:text-blue-400"
-                    />
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                      تعداد
-                    </span>
-                  </div>
-                  <div className="mt-1">
+                  {/* Quantity */}
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600 flex flex-col justify-center">
+                    <div className="flex items-center space-x-2 space-x-reverse mb-1">
+                      <Icon
+                        name="list"
+                        size={14}
+                        className="text-blue-600 dark:text-blue-400"
+                      />
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                        تعداد
+                      </span>
+                    </div>
                     <span className="font-bold text-lg text-gray-900 dark:text-white">
                       {new Intl.NumberFormat("fa-IR").format(location.quantity)}
                     </span>
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Cleaning Information */}
-            {location.cleaned_time && (
-              <div
-                className={cn(
-                  "rounded-lg p-3 border transition-colors",
-                  getStatusColor()
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 space-x-reverse">
-                    <Icon
-                      name={
-                        cleaningStatus === "clean"
-                          ? "check-circle"
-                          : cleaningStatus === "due-soon"
-                          ? "clock"
-                          : "alert-circle"
-                      }
-                      size={14}
-                    />
-                    <span className="text-xs font-medium">وضعیت تمیزکاری</span>
-                  </div>
-                  <span className="text-xs font-medium">
-                    {cleaningStatus === "clean" && "تمیز"}
-                    {cleaningStatus === "due-soon" && "نزدیک موعد"}
-                    {cleaningStatus === "overdue" && "گذشته از موعد"}
-                    {cleaningStatus === "never" && "هیچ وقت"}
-                  </span>
-                </div>
-                <div className="mt-1 text-xs">
-                  آخرین بار: {formatDate(location.cleaned_time)}
-                </div>
               </div>
-            )}
+
+              {/* Cleaning Information - 35px */}
+              <div className="h-[35px]">
+                {location.cleaned_time ? (
+                  <div
+                    className={cn(
+                      "rounded-lg p-3 border transition-colors h-full flex items-center justify-between",
+                      getStatusColor()
+                    )}
+                  >
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <Icon
+                        name={
+                          cleaningStatus === "clean"
+                            ? "check-circle"
+                            : cleaningStatus === "due-soon"
+                            ? "clock"
+                            : "alert-circle"
+                        }
+                        size={14}
+                      />
+                      <span className="text-xs font-medium">
+                        آخرین تمیزکاری:{" "}
+                        {formatDate(location.cleaned_time).split(" ")[0]}
+                      </span>
+                    </div>
+                    <span className="text-xs font-medium">
+                      {cleaningStatus === "clean" && "تمیز"}
+                      {cleaningStatus === "due-soon" && "نزدیک موعد"}
+                      {cleaningStatus === "overdue" && "گذشته از موعد"}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 h-full flex items-center justify-center">
+                    <span className="text-xs text-gray-400">
+                      بدون برنامه تمیزکاری
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Enhanced Actions */}
