@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Icon, Modal, ImageGallery } from "../ui";
 import Checkbox from "../ui/Checkbox";
+import LocationDetailModal from "./LocationDetailModal";
 import {
   locationTypeLabels,
   locationTypeIcons,
@@ -9,6 +10,7 @@ import {
   cn,
 } from "../../lib/utils";
 import type { Location } from "../../types";
+import toast from "react-hot-toast";
 
 interface LocationCardProps {
   location: Location;
@@ -16,7 +18,7 @@ interface LocationCardProps {
   onDelete?: (location: Location) => void;
   onMove?: (location: Location) => void;
   onMarkCleaned?: (location: Location) => void;
-  onSelect?: (location: Location) => void;
+  onViewChildren?: (location: Location) => void;
   onToggleSelect?: (id: number) => void;
   isSelected?: boolean;
   showActions?: boolean;
@@ -31,7 +33,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
   onDelete,
   onMove,
   onMarkCleaned,
-  onSelect,
+  onViewChildren,
   onToggleSelect,
   isSelected = false,
   showActions = true,
@@ -41,6 +43,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
 }) => {
   const [showImageModal, setShowImageModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   const locationTypeIcon =
@@ -48,12 +51,23 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
   const handleCardClick = () => {
     if (!showSelection) {
-      onSelect?.(location);
+      setShowDetailModal(true);
     }
   };
 
   const handleCheckboxChange = () => {
     onToggleSelect?.(location.id);
+  };
+
+  const handleCopyToClipboard = (text: string, label: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success(`${label} کپی شد: ${text}`);
+      })
+      .catch(() => {
+        toast.error("خطا در کپی کردن");
+      });
   };
 
   const handleDelete = () => {
@@ -160,10 +174,17 @@ const LocationCard: React.FC<LocationCardProps> = ({
           {/* Fixed Barcode Section - 20px */}
           <div className="h-[20px] flex-shrink-0 mb-2">
             {location.barcode ? (
-              <div className="flex items-center space-x-1 space-x-reverse text-gray-600 dark:text-gray-400 text-xs">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCopyToClipboard(location.barcode!, "بارکد");
+                }}
+                className="flex items-center space-x-1 space-x-reverse text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-xs transition-colors cursor-pointer"
+              >
                 <Icon name="tag" size={10} />
                 <span className="font-mono truncate">{location.barcode}</span>
-              </div>
+                <Icon name="file-text" size={8} className="opacity-50" />
+              </button>
             ) : (
               <div></div>
             )}
@@ -262,6 +283,19 @@ const LocationCard: React.FC<LocationCardProps> = ({
               <div className="border-t border-gray-100 dark:border-gray-700 pt-2">
                 <div className="flex items-center justify-between">
                   <div className="flex space-x-1 space-x-reverse">
+                    {location.is_container && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onViewChildren?.(location);
+                        }}
+                        className="hover:bg-green-50 hover:border-green-300 hover:text-green-700 dark:hover:bg-green-900/20"
+                      >
+                        <Icon name="chevron-left" size={12} />
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="outline"
@@ -294,9 +328,15 @@ const LocationCard: React.FC<LocationCardProps> = ({
                       <Icon name="trash" size={12} />
                     </Button>
                   </div>
-                  <span className="text-xs text-gray-400 font-mono">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopyToClipboard(location.id.toString(), "شناسه");
+                    }}
+                    className="text-xs text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 font-mono transition-colors cursor-pointer"
+                  >
                     #{location.id}
-                  </span>
+                  </button>
                 </div>
               </div>
             )}
@@ -396,10 +436,16 @@ const LocationCard: React.FC<LocationCardProps> = ({
                       {location.name}
                     </h3>
                     {location.barcode && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex-shrink-0">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCopyToClipboard(location.barcode!, "بارکد");
+                        }}
+                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex-shrink-0 hover:bg-primary-100 hover:text-primary-700 dark:hover:bg-primary-900/30 dark:hover:text-primary-300 transition-colors cursor-pointer"
+                      >
                         <Icon name="tag" size={10} className="ml-1" />
                         {location.barcode}
-                      </span>
+                      </button>
                     )}
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
@@ -574,6 +620,23 @@ const LocationCard: React.FC<LocationCardProps> = ({
               <div className="flex items-center justify-between">
                 {/* Primary Actions */}
                 <div className="flex items-center space-x-2 space-x-reverse">
+                  {location.is_container && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onViewChildren?.(location);
+                      }}
+                      className="hover:bg-green-50 hover:border-green-300 hover:text-green-700 dark:hover:bg-green-900/20 transition-colors"
+                    >
+                      <Icon name="chevron-left" size={14} />
+                      <span className="mr-1 hidden sm:inline">
+                        مشاهده فرزندان
+                      </span>
+                    </Button>
+                  )}
+
                   <Button
                     size="sm"
                     variant="outline"
@@ -652,9 +715,15 @@ const LocationCard: React.FC<LocationCardProps> = ({
                 </div>
 
                 {/* Location ID for reference */}
-                <span className="font-mono text-xs text-gray-400 dark:text-gray-500">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyToClipboard(location.id.toString(), "شناسه");
+                  }}
+                  className="font-mono text-xs text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer"
+                >
                   #{location.id}
-                </span>
+                </button>
               </div>
             </div>
           )}
@@ -678,6 +747,18 @@ const LocationCard: React.FC<LocationCardProps> = ({
       >
         <ImageGallery images={location.images || []} />
       </Modal>
+
+      {/* Location Detail Modal */}
+      <LocationDetailModal
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        location={location}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onMove={onMove}
+        onMarkCleaned={onMarkCleaned}
+        onViewChildren={onViewChildren}
+      />
 
       {/* Delete Confirmation Modal */}
       <Modal

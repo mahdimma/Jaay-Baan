@@ -6,7 +6,7 @@ import {
 } from "../hooks/useApi";
 import { useLocationStore } from "../store";
 import { Button, Icon, Loading } from "../components/ui";
-import SimpleLocationCard from "../components/locations/SimpleLocationCard";
+import LocationCard from "../components/locations/LocationCard";
 import type { Location } from "../types";
 
 const CleaningPage: React.FC = () => {
@@ -306,11 +306,12 @@ const CleaningPage: React.FC = () => {
                     <div className="absolute inset-0 bg-blue-500/10 rounded-2xl pointer-events-none z-10"></div>
                   )}
 
-                  <SimpleLocationCard
+                  <LocationCard
                     location={location}
                     onMarkCleaned={handleMarkCleaned}
                     isSelected={selectedItems.includes(location.id)}
                     showActions={false}
+                    variant="minimal"
                   />
                 </div>
               ))}

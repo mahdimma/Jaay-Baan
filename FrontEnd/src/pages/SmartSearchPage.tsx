@@ -404,7 +404,7 @@ const SmartSearchPage: React.FC = () => {
                   <LocationCard
                     key={location.id}
                     location={location}
-                    onSelect={handleLocationSelect}
+                    onViewChildren={handleLocationSelect}
                     showActions={false}
                     variant="minimal"
                   />

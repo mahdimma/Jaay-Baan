@@ -28,6 +28,7 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronLeft,
+  ArrowLeft,
   Menu,
   X,
   Calendar,
@@ -41,6 +42,7 @@ import {
   Layers,
   Star,
   Camera,
+  Hash,
   PanelLeftClose,
   PanelLeftOpen,
   PanelRightClose,
@@ -84,6 +86,7 @@ const iconMap = {
   "chevron-down": ChevronDown,
   "chevron-right": ChevronRight,
   "chevron-left": ChevronLeft,
+  "arrow-left": ArrowLeft,
   menu: Menu,
   x: X,
   "panel-left-close": PanelLeftClose,
@@ -104,6 +107,7 @@ const iconMap = {
   layers: Layers,
   star: Star,
   camera: Camera,
+  hash: Hash,
 };
 
 interface IconProps {

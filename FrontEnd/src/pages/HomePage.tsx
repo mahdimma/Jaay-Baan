@@ -397,7 +397,7 @@ const HomePage: React.FC = () => {
                   <LocationCard
                     key={location.id}
                     location={location}
-                    onSelect={handleSelectLocation}
+                    onViewChildren={handleSelectLocation}
                     onEdit={() => handleEditLocation(location)}
                     onDelete={() => handleDeleteLocation(location)}
                     onMarkCleaned={() => handleMarkCleaned(location)}
@@ -405,7 +405,7 @@ const HomePage: React.FC = () => {
                     showSelection={uiState.bulkMode}
                     isSelected={selectedItems.includes(location.id)}
                     onToggleSelect={toggleSelectedItem}
-                    compact
+                    variant="detailed"
                   />
                 ))}
               </div>
@@ -417,7 +417,7 @@ const HomePage: React.FC = () => {
                 <LocationCard
                   key={location.id}
                   location={location}
-                  onSelect={handleSelectLocation}
+                  onViewChildren={handleSelectLocation}
                   onEdit={() => handleEditLocation(location)}
                   onDelete={() => handleDeleteLocation(location)}
                   onMarkCleaned={() => handleMarkCleaned(location)}
