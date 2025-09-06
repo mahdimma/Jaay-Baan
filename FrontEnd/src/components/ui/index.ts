@@ -8,3 +8,4 @@ export { default as Checkbox } from "./Checkbox";
 export { ImageUpload } from "./ImageUpload";
 export { default as ImageGallery } from "./ImageGallery";
 export { default as TreeSelector } from "./TreeSelector";
+export { default as Pagination } from "./Pagination";

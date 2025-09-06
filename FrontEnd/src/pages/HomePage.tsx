@@ -10,7 +10,7 @@ import {
   useUpdateLocation,
 } from "../hooks/useApi";
 import { useLocationStore } from "../store";
-import { Button, Icon, Loading } from "../components/ui";
+import { Button, Icon, Loading, Pagination } from "../components/ui";
 import TreeView from "../components/locations/TreeView";
 import LocationCard from "../components/locations/LocationCard";
 import LocationForm from "../components/locations/LocationForm";
@@ -36,6 +36,7 @@ const HomePage: React.FC = () => {
     locationToMove: null as Location | null,
     selectedParentId: undefined as number | undefined,
     editingLocation: null as Location | null,
+    currentPage: 1,
   });
 
   // Store State
@@ -53,7 +54,8 @@ const HomePage: React.FC = () => {
   const { data: treeData, isLoading: treeLoading } = useLocationTree();
   const { data: locationsData, isLoading: locationsLoading } = useLocations({
     parent_id: currentParent || "root",
-    page_size: 50,
+    page_size: 9,
+    page: dataState.currentPage,
   });
   const { data: breadcrumbData } = useBreadcrumb(selectedLocation?.id || 0);
 
@@ -78,18 +80,20 @@ const HomePage: React.FC = () => {
     (node: TreeNode) => {
       setSelectedLocation(node);
       setCurrentParent(node.id);
+      updateDataState({ currentPage: 1 }); // Reset to first page when selecting new node
       // Don't disable bulk mode when selecting tree nodes
       // Users should be able to navigate while in bulk mode
     },
-    [setSelectedLocation, setCurrentParent]
+    [setSelectedLocation, setCurrentParent, updateDataState]
   );
 
   const handleHomeClick = useCallback(() => {
     setSelectedLocation(null);
     setCurrentParent(null);
+    updateDataState({ currentPage: 1 }); // Reset to first page when going home
     // Don't disable bulk mode when navigating home
     // Users should be able to navigate while in bulk mode
-  }, [setSelectedLocation, setCurrentParent]);
+  }, [setSelectedLocation, setCurrentParent, updateDataState]);
 
   const handleCreateLocation = useCallback(
     (data: CreateLocationData) => {
@@ -103,7 +107,7 @@ const HomePage: React.FC = () => {
       createLocationMutation.mutate(locationData, {
         onSuccess: () => {
           updateUiState({ isFormOpen: false });
-          updateDataState({ selectedParentId: undefined });
+          updateDataState({ selectedParentId: undefined, currentPage: 1 });
           toast.success("مکان جدید با موفقیت ایجاد شد");
         },
       });
@@ -127,7 +131,7 @@ const HomePage: React.FC = () => {
         {
           onSuccess: () => {
             updateUiState({ isFormOpen: false });
-            updateDataState({ editingLocation: null });
+            updateDataState({ editingLocation: null, currentPage: 1 });
             toast.success("مکان با موفقیت بروزرسانی شد");
           },
         }
@@ -223,11 +227,24 @@ const HomePage: React.FC = () => {
       // Navigate into the selected location to show its children
       setSelectedLocation(location);
       setCurrentParent(location.id);
+      updateDataState({ currentPage: 1 }); // Reset to first page when selecting new location
     },
-    [setSelectedLocation, setCurrentParent]
+    [setSelectedLocation, setCurrentParent, updateDataState]
+  );
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      updateDataState({ currentPage: page });
+    },
+    [updateDataState]
   );
 
   const locations = locationsData?.results || [];
+  const totalItems = locationsData?.count || 0;
+  const pageSize = 9; // Match the API call page_size
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const hasNextPage = !!locationsData?.next;
+  const hasPreviousPage = !!locationsData?.previous;
 
   // Empty state component to avoid duplication
   const renderEmptyState = useCallback(
@@ -247,10 +264,9 @@ const HomePage: React.FC = () => {
         <Button
           onClick={handleOpenCreateForm}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
-        >
-          <Icon name="plus" size={20} className="ml-2" />
-          ایجاد مکان
-        </Button>
+          icon={<Icon name="plus" size={20} className="ml-2" />}
+          text="ایجاد مکان"
+        />
       </div>
     ),
     [handleOpenCreateForm]
@@ -276,10 +292,9 @@ const HomePage: React.FC = () => {
               size="sm"
               onClick={handleToggleBulkMode}
               className="flex items-center gap-2"
-            >
-              <Icon name="list" size={16} />
-              انتخاب گروهی
-            </Button>
+              icon={<Icon name="list" size={16} />}
+              text="انتخاب گروهی"
+            />
 
             {/* View Toggle */}
             <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
@@ -313,19 +328,17 @@ const HomePage: React.FC = () => {
               size="sm"
               onClick={() => updateUiState({ isExportOpen: true })}
               className="flex items-center gap-2"
-            >
-              <Icon name="download" size={16} />
-              خروجی
-            </Button>
+              icon={<Icon name="download" size={16} />}
+              text="خروجی"
+            />
             <Button
               onClick={handleOpenCreateForm}
               variant="primary"
               size="sm"
               className="flex items-center gap-2"
-            >
-              <Icon name="plus" size={16} />
-              مکان جدید
-            </Button>
+              icon={<Icon name="plus" size={16} />}
+              text="مکان جدید"
+            />
           </div>
         </div>
       </div>
@@ -383,16 +396,58 @@ const HomePage: React.FC = () => {
             renderEmptyState()
           ) : uiState.view === "tree" ? (
             /* Tree View */
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
-                  {selectedLocation ? selectedLocation.name : "همه مکان‌ها"}
-                </h2>
-                <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
-                  {locations.length} مورد
-                </span>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
+                    {selectedLocation ? selectedLocation.name : "همه مکان‌ها"}
+                  </h2>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                    {totalItems > 0
+                      ? `${
+                          (dataState.currentPage - 1) * pageSize + 1
+                        }-${Math.min(
+                          dataState.currentPage * pageSize,
+                          totalItems
+                        )} از ${totalItems} مورد`
+                      : `${locations.length} مورد`}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {locations.map((location) => (
+                    <LocationCard
+                      key={location.id}
+                      location={location}
+                      onViewChildren={handleSelectLocation}
+                      onEdit={() => handleEditLocation(location)}
+                      onDelete={() => handleDeleteLocation(location)}
+                      onMarkCleaned={() => handleMarkCleaned(location)}
+                      onMove={() => handleMoveLocation(location)}
+                      showSelection={uiState.bulkMode}
+                      isSelected={selectedItems.includes(location.id)}
+                      onToggleSelect={toggleSelectedItem}
+                      variant="detailed"
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="space-y-3">
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={dataState.currentPage}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
+                  itemsPerPage={pageSize}
+                  onPageChange={handlePageChange}
+                  hasNextPage={hasNextPage}
+                  hasPreviousPage={hasPreviousPage}
+                  isLoading={locationsLoading}
+                />
+              )}
+            </div>
+          ) : (
+            /* Grid View */
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {locations.map((location) => (
                   <LocationCard
                     key={location.id}
@@ -405,29 +460,24 @@ const HomePage: React.FC = () => {
                     showSelection={uiState.bulkMode}
                     isSelected={selectedItems.includes(location.id)}
                     onToggleSelect={toggleSelectedItem}
-                    variant="detailed"
+                    variant="minimal"
                   />
                 ))}
               </div>
-            </div>
-          ) : (
-            /* Grid View */
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {locations.map((location) => (
-                <LocationCard
-                  key={location.id}
-                  location={location}
-                  onViewChildren={handleSelectLocation}
-                  onEdit={() => handleEditLocation(location)}
-                  onDelete={() => handleDeleteLocation(location)}
-                  onMarkCleaned={() => handleMarkCleaned(location)}
-                  onMove={() => handleMoveLocation(location)}
-                  showSelection={uiState.bulkMode}
-                  isSelected={selectedItems.includes(location.id)}
-                  onToggleSelect={toggleSelectedItem}
-                  variant="minimal"
-                />
-              ))}
+              {totalPages > 1 && (
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  <Pagination
+                    currentPage={dataState.currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={pageSize}
+                    onPageChange={handlePageChange}
+                    hasNextPage={hasNextPage}
+                    hasPreviousPage={hasPreviousPage}
+                    isLoading={locationsLoading}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>

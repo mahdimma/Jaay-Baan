@@ -37,7 +37,7 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
   return (
     <div>
       <div
-        className={`tree-item flex items-center py-2 px-3 cursor-pointer rounded-md ${
+        className={`min-w-40 tree-item flex items-center py-2 px-3 cursor-pointer rounded-md ${
           isSelected ? "selected" : ""
         }`}
         style={{ marginRight: `${level * 20}px` }}
@@ -160,7 +160,7 @@ const TreeView: React.FC<TreeViewProps> = ({
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 overflow-auto max-h-96">
       {data.map((node) => (
         <TreeNodeComponent
           key={node.id}

@@ -5,7 +5,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
-  children: React.ReactNode;
+  icon?: React.ReactNode;
+  text?: string;
+  children?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -16,6 +18,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size = "md",
       loading = false,
       disabled,
+      icon,
+      text,
       children,
       ...props
     },
@@ -49,7 +53,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           baseStyles,
           variants[variant],
           sizes[size],
-          "relative overflow-hidden",
+          "relative overflow-hidden m-0.5",
           className
         )}
         disabled={disabled || loading}
@@ -78,7 +82,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             ></path>
           </svg>
         )}
-        <span className={loading ? "opacity-70" : ""}>{children}</span>
+        <span className="flex items-center">
+          {!loading && icon && <span className="flex-shrink-0">{icon}</span>}
+          <span className={loading ? "opacity-70" : ""}>
+            {text || children}
+          </span>
+        </span>
       </button>
     );
   }

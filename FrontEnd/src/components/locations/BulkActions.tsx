@@ -136,34 +136,34 @@ const BulkActions: React.FC<BulkActionsProps> = ({
               variant="outline"
               onClick={handleBulkMarkCleaned}
               loading={bulkOperationMutation.isPending}
-            >
-              <Icon name="check-circle" size={16} className="ml-1" />
-              تمیز شده
-            </Button>
+              icon={<Icon name="check-circle" size={16} className="ml-1" />}
+              text="تمیز شده"
+            />
 
             <Button
               size="sm"
               variant="outline"
               onClick={() => setIsMoveModalOpen(true)}
               loading={bulkOperationMutation.isPending}
-            >
-              <Icon name="move" size={16} className="ml-1" />
-              جابجایی
-            </Button>
+              icon={<Icon name="move" size={16} className="ml-1" />}
+              text="جابجایی"
+            />
 
             <Button
               size="sm"
               variant="danger"
               onClick={() => setIsDeleteModalOpen(true)}
               loading={bulkOperationMutation.isPending}
-            >
-              <Icon name="trash" size={16} className="ml-1" />
-              حذف
-            </Button>
+              icon={<Icon name="trash" size={16} className="ml-1" />}
+              text="حذف"
+            />
 
-            <Button size="sm" variant="ghost" onClick={onClearSelection}>
-              <Icon name="x" size={16} />
-            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onClearSelection}
+              icon={<Icon name="x" size={16} />}
+            />
           </div>
         </div>
       </div>
@@ -192,16 +192,14 @@ const BulkActions: React.FC<BulkActionsProps> = ({
             <Button
               variant="outline"
               onClick={() => setIsDeleteModalOpen(false)}
-            >
-              انصراف
-            </Button>
+              text="انصراف"
+            />
             <Button
               variant="danger"
               onClick={handleBulkDelete}
               loading={bulkOperationMutation.isPending}
-            >
-              حذف
-            </Button>
+              text="حذف"
+            />
           </div>
         </div>
       </Modal>
@@ -231,16 +229,17 @@ const BulkActions: React.FC<BulkActionsProps> = ({
           />
 
           <div className="flex justify-end space-x-3 space-x-reverse">
-            <Button variant="outline" onClick={() => setIsMoveModalOpen(false)}>
-              انصراف
-            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsMoveModalOpen(false)}
+              text="انصراف"
+            />
             <Button
               onClick={handleBulkMove}
               loading={bulkOperationMutation.isPending}
               disabled={!selectedParentId && selectedParentId !== 0}
-            >
-              جابجایی
-            </Button>
+              text="جابجایی"
+            />
           </div>
         </div>
       </Modal>

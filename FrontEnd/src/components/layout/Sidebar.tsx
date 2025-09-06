@@ -82,12 +82,9 @@ const Sidebar: React.FC = () => {
             onClick={handleLogout}
             loading={logoutMutation.isPending}
             className="w-full justify-start flex-row px-4 py-2 text-red-600 dark:text-red-400 bg-red-200 dark:bg-red-900 hover:bg-red-300 dark:hover:bg-red-800 rounded-lg transition-colors"
-          >
-            <span className="flex items-center">
-              <Icon name="logout" size={16} className="ml-4 mr-2" />
-              خروج
-            </span>
-          </Button>
+            icon={<Icon name="logout" size={16} className="ml-4 mr-2" />}
+            text="خروج"
+          />
         </div>
       </div>
     </aside>

@@ -241,16 +241,14 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
             onClick={onClose}
             disabled={isLoading}
             className="ml-2"
-          >
-            انصراف
-          </Button>
+            text="انصراف"
+          />
           <Button
             onClick={handleMove}
             loading={isLoading}
             disabled={selectedParentId === (location.parent_id || null)}
-          >
-            جابجایی
-          </Button>
+            text="جابجایی"
+          />
         </div>
       </div>
     </Modal>

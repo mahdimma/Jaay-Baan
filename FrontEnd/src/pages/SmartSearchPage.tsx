@@ -156,20 +156,18 @@ const SmartSearchPage: React.FC = () => {
                   size="sm"
                   onClick={() => setAdvancedMode(!advancedMode)}
                   className="flex items-center gap-2"
-                >
-                  <Icon name="filter" size={16} />
-                  {advancedMode ? "حالت ساده" : "حالت پیشرفته"}
-                </Button>
+                  icon={<Icon name="filter" size={16} />}
+                  text={advancedMode ? "حالت ساده" : "حالت پیشرفته"}
+                />
 
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setIsScannerOpen(true)}
                   className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-slate-600 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-slate-600"
-                >
-                  <Icon name="camera" size={16} />
-                  اسکن بارکد
-                </Button>
+                  icon={<Icon name="camera" size={16} />}
+                  text="اسکن بارکد"
+                />
               </div>
             </div>
           </div>
@@ -336,10 +334,9 @@ const SmartSearchPage: React.FC = () => {
                   size="sm"
                   onClick={clearFilters}
                   className="flex items-center gap-2 bg-red-50 dark:bg-slate-700 hover:bg-red-100 dark:hover:bg-slate-600 text-red-700 dark:text-red-300 border-red-200 dark:border-slate-600"
-                >
-                  <Icon name="x" size={16} />
-                  پاک کردن فیلترها
-                </Button>
+                  icon={<Icon name="x" size={16} />}
+                  text="پاک کردن فیلترها"
+                />
               )}
 
               {searchResults && (
@@ -430,9 +427,8 @@ const SmartSearchPage: React.FC = () => {
                 variant="outline"
                 onClick={clearFilters}
                 className="bg-blue-50 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-slate-600 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-slate-600"
-              >
-                پاک کردن فیلترها
-              </Button>
+                text="پاک کردن فیلترها"
+              />
             </div>
           ) : (
             <div className="text-center py-16">
@@ -454,18 +450,16 @@ const SmartSearchPage: React.FC = () => {
                   variant="outline"
                   onClick={() => setIsScannerOpen(true)}
                   className="bg-blue-50 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-slate-600 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-slate-600"
-                >
-                  <Icon name="camera" size={16} className="ml-2" />
-                  اسکن بارکد
-                </Button>
+                  icon={<Icon name="camera" size={16} className="ml-2" />}
+                  text="اسکن بارکد"
+                />
                 <Button
                   variant="outline"
                   onClick={() => setAdvancedMode(!advancedMode)}
                   className="bg-gray-50 dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600"
-                >
-                  <Icon name="filter" size={16} className="ml-2" />
-                  فیلترهای پیشرفته
-                </Button>
+                  icon={<Icon name="filter" size={16} className="ml-2" />}
+                  text="فیلترهای پیشرفته"
+                />
               </div>
             </div>
           )}

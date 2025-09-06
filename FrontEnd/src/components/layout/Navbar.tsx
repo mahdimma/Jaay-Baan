@@ -27,13 +27,14 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isSidebarOpen }) => {
           onClick={toggleSidebar}
           className="mr-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 lg:hidden transition-colors"
           aria-label="Toggle sidebar"
-        >
-          <Icon
-            name={isSidebarOpen ? "x" : "align-justify"}
-            size={20}
-            className="text-gray-700 dark:text-gray-300"
-          />
-        </Button>
+          icon={
+            <Icon
+              name={isSidebarOpen ? "x" : "align-justify"}
+              size={20}
+              className="text-gray-700 dark:text-gray-300"
+            />
+          }
+        />
 
         {/* Desktop toggle button */}
         <Button
@@ -42,13 +43,14 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isSidebarOpen }) => {
           onClick={toggleSidebar}
           className="mr-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hidden lg:flex transition-colors"
           aria-label="Toggle sidebar"
-        >
-          <Icon
-            name={isSidebarOpen ? "panel-left-close" : "panel-left-open"}
-            size={20}
-            className="text-gray-700 dark:text-gray-300"
-          />
-        </Button>
+          icon={
+            <Icon
+              name={isSidebarOpen ? "panel-left-close" : "panel-left-open"}
+              size={20}
+              className="text-gray-700 dark:text-gray-300"
+            />
+          }
+        />
 
         <Breadcrumb />
       </div>
@@ -68,10 +70,9 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isSidebarOpen }) => {
           onClick={handleLogout}
           loading={logoutMutation.isPending}
           className="bg-white border border-gray-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 shadow-sm mr-2"
-        >
-          <Icon name="logout" size={16} className="ml-1" />
-          خروج
-        </Button>
+          icon={<Icon name="logout" size={16} className="ml-1" />}
+          text="خروج"
+        />
       </div>
     </header>
   );

@@ -92,9 +92,8 @@ const CleaningPage: React.FC = () => {
             <Button
               onClick={() => window.location.reload()}
               className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
-            >
-              تلاش مجدد
-            </Button>
+              text="تلاش مجدد"
+            />
           </div>
         </div>
       </div>
@@ -164,14 +163,15 @@ const CleaningPage: React.FC = () => {
                   variant="outline"
                   onClick={isAllSelected ? handleSelectNone : handleSelectAll}
                   className="bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white hover:border-gray-300"
-                >
-                  <Icon
-                    name={isAllSelected ? "x" : "check-circle"}
-                    size={16}
-                    className="ml-2"
-                  />
-                  {isAllSelected ? "لغو انتخاب همه" : "انتخاب همه"}
-                </Button>
+                  icon={
+                    <Icon
+                      name={isAllSelected ? "x" : "check-circle"}
+                      size={16}
+                      className="ml-2"
+                    />
+                  }
+                  text={isAllSelected ? "لغو انتخاب همه" : "انتخاب همه"}
+                />
 
                 {/* Bulk Action */}
                 {selectedItems.length > 0 && (
@@ -179,10 +179,11 @@ const CleaningPage: React.FC = () => {
                     onClick={handleBulkMarkCleaned}
                     loading={bulkOperationMutation.isPending}
                     className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg"
-                  >
-                    <Icon name="check-circle" size={16} className="ml-2" />
-                    تمیز کردن {selectedItems.length} مورد
-                  </Button>
+                    icon={
+                      <Icon name="check-circle" size={16} className="ml-2" />
+                    }
+                    text={`تمیز کردن ${selectedItems.length} مورد`}
+                  />
                 )}
               </div>
             )}
@@ -214,10 +215,9 @@ const CleaningPage: React.FC = () => {
                 variant="ghost"
                 onClick={clearSelection}
                 className="text-blue-600 hover:text-blue-800 hover:bg-blue-100/50"
-              >
-                <Icon name="x" size={16} className="ml-1" />
-                لغو انتخاب
-              </Button>
+                icon={<Icon name="x" size={16} className="ml-1" />}
+                text="لغو انتخاب"
+              />
             </div>
           </div>
         )}

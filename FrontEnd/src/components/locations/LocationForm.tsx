@@ -383,12 +383,13 @@ const LocationForm: React.FC<LocationFormProps> = ({
             type="button"
             variant="outline"
             onClick={onClose}
-          >
-            انصراف
-          </Button>
-          <Button type="submit" loading={isLoading}>
-            {isEdit ? "بروزرسانی" : "ایجاد"}
-          </Button>
+            text="انصراف"
+          />
+          <Button
+            type="submit"
+            loading={isLoading}
+            text={isEdit ? "بروزرسانی" : "ایجاد"}
+          />
         </div>
       </form>
     </Modal>

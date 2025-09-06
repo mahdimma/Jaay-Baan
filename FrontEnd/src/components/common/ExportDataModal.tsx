@@ -227,17 +227,15 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
             variant="outline"
             onClick={onClose}
             disabled={exportMutation.isPending}
-          >
-            انصراف
-          </Button>
+            text="انصراف"
+          />
           <Button
             onClick={handleExport}
             loading={exportMutation.isPending}
             className="flex items-center"
-          >
-            <Icon name="download" size={16} className="ml-2" />
-            دانلود فایل
-          </Button>
+            icon={<Icon name="download" size={16} className="ml-2" />}
+            text="دانلود فایل"
+          />
         </div>
       </div>
     </Modal>
