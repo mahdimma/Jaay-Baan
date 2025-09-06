@@ -400,6 +400,7 @@ const SmartSearchPage: React.FC = () => {
                     location={location}
                     onSelect={handleLocationSelect}
                     showActions={false}
+                    variant="minimal"
                   />
                 ))}
               </div>

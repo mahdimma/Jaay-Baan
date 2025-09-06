@@ -385,7 +385,7 @@ const HomePage: React.FC = () => {
             /* Tree View */
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
                   {selectedLocation ? selectedLocation.name : "همه مکان‌ها"}
                 </h2>
                 <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
@@ -425,6 +425,7 @@ const HomePage: React.FC = () => {
                   showSelection={uiState.bulkMode}
                   isSelected={selectedItems.includes(location.id)}
                   onToggleSelect={toggleSelectedItem}
+                  variant="minimal"
                 />
               ))}
             </div>
