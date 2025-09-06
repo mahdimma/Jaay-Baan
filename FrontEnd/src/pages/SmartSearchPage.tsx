@@ -139,13 +139,13 @@ const SmartSearchPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="mb-4 lg:mb-0">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">
                   🔍 جستجوی هوشمند
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-slate-300">
                   جستجو و فیلتر کردن مکان‌ها و اشیاء با امکانات پیشرفته
                 </p>
               </div>
@@ -165,7 +165,7 @@ const SmartSearchPage: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsScannerOpen(true)}
-                  className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+                  className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-slate-600 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-slate-600"
                 >
                   <Icon name="camera" size={16} />
                   اسکن بارکد
@@ -176,7 +176,7 @@ const SmartSearchPage: React.FC = () => {
         </div>
 
         {/* Search Form */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 mb-6">
           {/* Main Search */}
           <div className="mb-6">
             <div className="relative">
@@ -185,20 +185,20 @@ const SmartSearchPage: React.FC = () => {
                 placeholder="🔍 جستجو در نام، توضیحات یا بارکد..."
                 onChange={handleQueryChange}
                 value={searchQuery}
-                className="pl-12 pr-4 h-12 text-lg border-2 border-gray-200 focus:border-blue-400 rounded-lg"
+                className="pl-12 pr-4 h-12 text-lg border-2 border-gray-200 dark:border-slate-600 focus:border-blue-400 dark:focus:border-blue-500 rounded-lg dark:bg-slate-700 dark:text-slate-100"
               />
               <Icon
                 name="search"
                 size={20}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-400"
               />
             </div>
           </div>
 
           {/* Search History */}
           {searchHistory.length > 0 && !searchParams.query && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <div className="mb-6 p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+              <h4 className="text-sm font-semibold text-gray-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                 <Icon name="clock" size={16} />
                 جستجوهای اخیر
               </h4>
@@ -210,7 +210,7 @@ const SmartSearchPage: React.FC = () => {
                       setSearchQuery(term);
                       setSearchParams((prev) => ({ ...prev, query: term }));
                     }}
-                    className="px-3 py-2 text-sm bg-white text-gray-700 rounded-lg hover:bg-gray-100 border border-gray-200 transition-all duration-200 hover:shadow-sm"
+                    className="px-3 py-2 text-sm bg-white dark:bg-slate-600 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-500 border border-gray-200 dark:border-slate-500 transition-all duration-200 hover:shadow-sm"
                   >
                     {term}
                   </button>
@@ -221,8 +221,8 @@ const SmartSearchPage: React.FC = () => {
 
           {/* Advanced Filters */}
           {advancedMode && (
-            <div className="border-t border-gray-200 pt-6">
-              <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+            <div className="border-t border-gray-200 dark:border-slate-600 pt-6">
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-slate-200 mb-6 flex items-center gap-2">
                 <Icon name="settings" size={18} />
                 فیلترهای پیشرفته
               </h4>
@@ -231,7 +231,7 @@ const SmartSearchPage: React.FC = () => {
                 {/* Left Column - Parent Selector */}
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300">
                       مکان والد
                     </label>
                     <TreeSelector
@@ -259,7 +259,7 @@ const SmartSearchPage: React.FC = () => {
                 {/* Right Column - Location Type & Quick Filters */}
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300">
                       نوع مکان
                     </label>
                     <Select
@@ -273,11 +273,11 @@ const SmartSearchPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300">
                       فیلترهای سریع
                     </label>
                     <div className="space-y-3">
-                      <label className="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 cursor-pointer transition-colors border border-blue-200">
+                      <label className="flex items-center p-3 bg-blue-50 dark:bg-slate-700 rounded-lg hover:bg-blue-100 dark:hover:bg-slate-600 cursor-pointer transition-colors border border-blue-200 dark:border-slate-600">
                         <input
                           type="checkbox"
                           checked={searchParams.has_barcode === true}
@@ -290,16 +290,16 @@ const SmartSearchPage: React.FC = () => {
                           className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 ml-3"
                         />
                         <div>
-                          <span className="text-sm font-medium text-blue-800">
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
                             📋 دارای بارکد
                           </span>
-                          <p className="text-xs text-blue-600">
+                          <p className="text-xs text-blue-600 dark:text-blue-400">
                             فقط مکان‌های دارای بارکد
                           </p>
                         </div>
                       </label>
 
-                      <label className="flex items-center p-3 bg-orange-50 rounded-lg hover:bg-orange-100 cursor-pointer transition-colors border border-orange-200">
+                      <label className="flex items-center p-3 bg-orange-50 dark:bg-slate-700 rounded-lg hover:bg-orange-100 dark:hover:bg-slate-600 cursor-pointer transition-colors border border-orange-200 dark:border-slate-600">
                         <input
                           type="checkbox"
                           checked={searchParams.needs_cleaning === true}
@@ -312,10 +312,10 @@ const SmartSearchPage: React.FC = () => {
                           className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500 ml-3"
                         />
                         <div>
-                          <span className="text-sm font-medium text-orange-800">
+                          <span className="text-sm font-medium text-orange-800 dark:text-orange-300">
                             🧹 نیاز به تمیزکاری
                           </span>
-                          <p className="text-xs text-orange-600">
+                          <p className="text-xs text-orange-600 dark:text-orange-400">
                             فقط مکان‌های کثیف
                           </p>
                         </div>
@@ -328,14 +328,14 @@ const SmartSearchPage: React.FC = () => {
           )}
 
           {/* Action Buttons & Status */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-gray-200 dark:border-slate-600">
             <div className="flex flex-wrap items-center gap-3 mb-3 sm:mb-0">
               {hasActiveFilters && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={clearFilters}
-                  className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+                  className="flex items-center gap-2 bg-red-50 dark:bg-slate-700 hover:bg-red-100 dark:hover:bg-slate-600 text-red-700 dark:text-red-300 border-red-200 dark:border-slate-600"
                 >
                   <Icon name="x" size={16} />
                   پاک کردن فیلترها
@@ -343,49 +343,55 @@ const SmartSearchPage: React.FC = () => {
               )}
 
               {searchResults && (
-                <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
+                <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-slate-700 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-medium">
                   <Icon name="search" size={16} />
                   {searchResults.count} نتیجه یافت شد
                 </div>
               )}
             </div>
 
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 dark:text-slate-400">
               💡 برای جستجو حداقل 2 کاراکتر وارد کنید
             </div>
           </div>
         </div>
 
         {/* Search Results */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16">
               <Loading text="🔍 در حال جستجو..." />
             </div>
           ) : error ? (
             <div className="text-center py-16">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="alert-circle" size={32} className="text-red-500" />
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon
+                  name="alert-circle"
+                  size={32}
+                  className="text-red-500 dark:text-red-400"
+                />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">
                 خطا در جستجو
               </h3>
-              <p className="text-gray-500">لطفاً دوباره تلاش کنید</p>
+              <p className="text-gray-500 dark:text-slate-400">
+                لطفاً دوباره تلاش کنید
+              </p>
             </div>
           ) : searchResults?.results && searchResults.results.length > 0 ? (
             <div className="p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 pb-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 pb-4 border-b border-gray-200 dark:border-slate-600">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 flex items-center gap-2">
                   <Icon name="grid" size={20} />
                   نتایج جستجو
                 </h2>
 
                 <div className="flex items-center gap-4 mt-3 sm:mt-0">
-                  <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-sm font-medium">
+                  <div className="bg-blue-50 dark:bg-slate-700 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-lg text-sm font-medium">
                     {searchResults.count} مورد
                   </div>
                   {searchResults.count > searchResults.results.length && (
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 dark:text-slate-400">
                       نمایش {searchResults.results.length} مورد از{" "}
                       {searchResults.count}
                     </span>
@@ -407,39 +413,47 @@ const SmartSearchPage: React.FC = () => {
             </div>
           ) : hasActiveFilters ? (
             <div className="text-center py-16">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="search" size={32} className="text-gray-400" />
+              <div className="w-16 h-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon
+                  name="search"
+                  size={32}
+                  className="text-gray-400 dark:text-slate-400"
+                />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">
                 نتیجه‌ای یافت نشد
               </h3>
-              <p className="text-gray-500 mb-6">
+              <p className="text-gray-500 dark:text-slate-400 mb-6">
                 جستجوی شما نتیجه‌ای نداشت. سعی کنید فیلترها را تغییر دهید.
               </p>
               <Button
                 variant="outline"
                 onClick={clearFilters}
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+                className="bg-blue-50 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-slate-600 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-slate-600"
               >
                 پاک کردن فیلترها
               </Button>
             </div>
           ) : (
             <div className="text-center py-16">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="search" size={32} className="text-blue-500" />
+              <div className="w-16 h-16 bg-blue-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon
+                  name="search"
+                  size={32}
+                  className="text-blue-500 dark:text-blue-400"
+                />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">
                 جستجو کنید
               </h3>
-              <p className="text-gray-500 mb-6">
+              <p className="text-gray-500 dark:text-slate-400 mb-6">
                 برای شروع، کلمه کلیدی وارد کنید یا از فیلترها استفاده کنید
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
                   variant="outline"
                   onClick={() => setIsScannerOpen(true)}
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+                  className="bg-blue-50 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-slate-600 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-slate-600"
                 >
                   <Icon name="camera" size={16} className="ml-2" />
                   اسکن بارکد
@@ -447,7 +461,7 @@ const SmartSearchPage: React.FC = () => {
                 <Button
                   variant="outline"
                   onClick={() => setAdvancedMode(!advancedMode)}
-                  className="bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200"
+                  className="bg-gray-50 dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600"
                 >
                   <Icon name="filter" size={16} className="ml-2" />
                   فیلترهای پیشرفته
