@@ -121,11 +121,15 @@ const BulkActions: React.FC<BulkActionsProps> = ({
 
   return (
     <>
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3 space-x-reverse">
-            <Icon name="check-circle" className="text-primary-600" size={20} />
-            <span className="text-sm font-medium text-gray-900">
+            <Icon
+              name="check-circle"
+              className="text-primary-600 dark:text-primary-400"
+              size={20}
+            />
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
               {selectedCount} مورد انتخاب شده
             </span>
           </div>
@@ -177,12 +181,16 @@ const BulkActions: React.FC<BulkActionsProps> = ({
       >
         <div className="space-y-4">
           <div className="flex items-start space-x-3 space-x-reverse">
-            <Icon name="alert-circle" className="text-red-600 mt-1" size={20} />
+            <Icon
+              name="alert-circle"
+              className="text-red-600 dark:text-red-400 mt-1"
+              size={20}
+            />
             <div>
-              <p className="text-gray-900">
+              <p className="text-gray-900 dark:text-gray-100">
                 آیا از حذف {selectedCount} مکان انتخاب شده اطمینان دارید؟
               </p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 این عمل غیرقابل بازگشت است.
               </p>
             </div>
@@ -212,7 +220,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
         size="md"
       >
         <div className="space-y-4">
-          <p className="text-gray-900">
+          <p className="text-gray-900 dark:text-gray-100">
             جابجایی {selectedCount} مکان انتخاب شده به:
           </p>
 

@@ -32,8 +32,8 @@ const Breadcrumb: React.FC = () => {
             to={page.path}
             className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
               location.pathname === page.path
-                ? "bg-blue-600 text-white shadow-sm"
-                : "text-gray-800 hover:text-blue-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200"
+                ? "bg-blue-600 text-white shadow-sm dark:bg-blue-500"
+                : "text-gray-800 hover:text-blue-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 dark:text-gray-200 dark:hover:text-blue-400 dark:hover:bg-gray-800 dark:hover:border-gray-700"
             }`}
           >
             <Icon name={page.icon} className="w-4 h-4 ml-2" />
@@ -56,17 +56,17 @@ const Breadcrumb: React.FC = () => {
                   {index > 0 && (
                     <Icon
                       name="chevron-left"
-                      className="w-3 h-3 text-gray-600 mx-1"
+                      className="w-3 h-3 text-gray-600 dark:text-gray-400 mx-1"
                     />
                   )}
                   {isLast ? (
-                    <span className="ms-1 text-sm font-medium text-gray-800 md:ms-2">
+                    <span className="ms-1 text-sm font-medium text-gray-800 dark:text-gray-200 md:ms-2">
                       {name}
                     </span>
                   ) : (
                     <Link
                       to={to}
-                      className="ms-1 text-sm font-medium text-gray-800 hover:text-blue-600 md:ms-2"
+                      className="ms-1 text-sm font-medium text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 md:ms-2"
                     >
                       {name}
                     </Link>
