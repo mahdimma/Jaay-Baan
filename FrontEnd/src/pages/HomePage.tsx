@@ -290,148 +290,183 @@ const HomePage: React.FC = () => {
   );
 
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-          <div className="mb-4 lg:mb-0">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              مدیریت مکان‌ها
-            </h1>
-            <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
-              مدیریت و سازماندهی اشیاء فیزیکی شما
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Bulk Mode Toggle */}
-            <Button
-              variant={uiState.bulkMode ? "secondary" : "outline"}
-              size="sm"
-              onClick={handleToggleBulkMode}
-              className="flex items-center gap-2"
-              icon={<Icon name="list" size={16} />}
-              text="انتخاب گروهی"
-            />
-
-            {/* View Toggle */}
-            <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
-              <button
-                onClick={() => updateUiState({ view: "tree" })}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  uiState.view === "tree"
-                    ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
-              >
-                <Icon name="list" size={14} className="mr-1" />
-                درخت
-              </button>
-              <button
-                onClick={() => updateUiState({ view: "grid" })}
-                className={`px-4 py-2 text-sm font-medium border-r border-gray-300 dark:border-gray-600 transition-colors ${
-                  uiState.view === "grid"
-                    ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
-              >
-                <Icon name="grid" size={14} className="mr-1" />
-                شبکه
-              </button>
+    <div className="space-y-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <div className="mb-4 lg:mb-0">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                مدیریت مکان‌ها
+              </h1>
+              <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
+                مدیریت و سازماندهی اشیاء فیزیکی شما
+              </p>
             </div>
-
-            {/* Action Buttons */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => updateUiState({ isExportOpen: true })}
-              className="flex items-center gap-2"
-              icon={<Icon name="download" size={16} />}
-              text="خروجی"
-            />
-            <Button
-              onClick={handleOpenCreateForm}
-              variant="primary"
-              size="sm"
-              className="flex items-center gap-2"
-              icon={<Icon name="plus" size={16} />}
-              text="مکان جدید"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Breadcrumb */}
-      {selectedLocation && breadcrumbData && (
-        <div className="mb-6">
-          <Breadcrumb
-            items={breadcrumbData}
-            onItemClick={(item) => setCurrentParent(item.id)}
-            onHomeClick={handleHomeClick}
-          />
-        </div>
-      )}
-
-      {/* Bulk Actions */}
-      {uiState.bulkMode && selectedItems.length > 0 && (
-        <div className="mb-6">
-          <BulkActions
-            selectedItems={selectedItems}
-            onClearSelection={() => {
-              updateUiState({ bulkMode: false });
-              clearSelection();
-            }}
-            allItems={locations}
-          />
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        {/* Tree Sidebar */}
-        <div className="xl:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              درخت مکان‌ها
-            </h2>
-            {treeLoading ? (
-              <Loading text="بارگذاری..." />
-            ) : (
-              <TreeView
-                data={treeData}
-                onNodeSelect={handleNodeSelect}
-                selectedNodeId={selectedLocation?.id}
-                onDataUpdate={setTreeData}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Bulk Mode Toggle */}
+              <Button
+                variant={uiState.bulkMode ? "secondary" : "outline"}
+                size="sm"
+                onClick={handleToggleBulkMode}
+                className="flex items-center gap-2"
+                icon={<Icon name="list" size={16} />}
+                text="انتخاب گروهی"
               />
-            )}
+
+              {/* View Toggle */}
+              <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => updateUiState({ view: "tree" })}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    uiState.view === "tree"
+                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <Icon name="list" size={14} className="mr-1" />
+                  درخت
+                </button>
+                <button
+                  onClick={() => updateUiState({ view: "grid" })}
+                  className={`px-4 py-2 text-sm font-medium border-r border-gray-300 dark:border-gray-600 transition-colors ${
+                    uiState.view === "grid"
+                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <Icon name="grid" size={14} className="mr-1" />
+                  شبکه
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => updateUiState({ isExportOpen: true })}
+                className="flex items-center gap-2"
+                icon={<Icon name="download" size={16} />}
+                text="خروجی"
+              />
+              <Button
+                onClick={handleOpenCreateForm}
+                variant="primary"
+                size="sm"
+                className="flex items-center gap-2"
+                icon={<Icon name="plus" size={16} />}
+                text="مکان جدید"
+              />
+            </div>
           </div>
         </div>
+
+        {/* Breadcrumb */}
+        {selectedLocation && breadcrumbData && (
+          <div className="mb-6">
+            <Breadcrumb
+              items={breadcrumbData}
+              onItemClick={(item) => setCurrentParent(item.id)}
+              onHomeClick={handleHomeClick}
+            />
+          </div>
+        )}
+
+        {/* Bulk Actions */}
+        {uiState.bulkMode && selectedItems.length > 0 && (
+          <div className="mb-6">
+            <BulkActions
+              selectedItems={selectedItems}
+              onClearSelection={() => {
+                updateUiState({ bulkMode: false });
+                clearSelection();
+              }}
+              allItems={locations}
+            />
+          </div>
+        )}
 
         {/* Main Content */}
-        <div className="xl:col-span-3">
-          {locationsLoading ? (
-            <Loading text="بارگذاری مکان‌ها..." />
-          ) : locations.length === 0 ? (
-            renderEmptyState()
-          ) : uiState.view === "tree" ? (
-            /* Tree View */
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
-                    {selectedLocation ? selectedLocation.name : "همه مکان‌ها"}
-                  </h2>
-                  <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
-                    {totalItems > 0
-                      ? `${
-                          (dataState.currentPage - 1) * pageSize + 1
-                        }-${Math.min(
-                          dataState.currentPage * pageSize,
-                          totalItems
-                        )} از ${totalItems} مورد`
-                      : `${locations.length} مورد`}
-                  </span>
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Tree Sidebar */}
+          <div className="xl:col-span-1">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                درخت مکان‌ها
+              </h2>
+              {treeLoading ? (
+                <Loading text="بارگذاری..." />
+              ) : (
+                <TreeView
+                  data={treeData}
+                  onNodeSelect={handleNodeSelect}
+                  selectedNodeId={selectedLocation?.id}
+                  onDataUpdate={setTreeData}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="xl:col-span-3">
+            {locationsLoading ? (
+              <Loading text="بارگذاری مکان‌ها..." />
+            ) : locations.length === 0 ? (
+              renderEmptyState()
+            ) : uiState.view === "tree" ? (
+              /* Tree View */
+              <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
+                      {selectedLocation ? selectedLocation.name : "همه مکان‌ها"}
+                    </h2>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                      {totalItems > 0
+                        ? `${
+                            (dataState.currentPage - 1) * pageSize + 1
+                          }-${Math.min(
+                            dataState.currentPage * pageSize,
+                            totalItems
+                          )} از ${totalItems} مورد`
+                        : `${locations.length} مورد`}
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    {locations.map((location) => (
+                      <LocationCard
+                        key={location.id}
+                        location={location}
+                        onViewChildren={handleSelectLocation}
+                        onEdit={() => handleEditLocation(location)}
+                        onDelete={() => handleDeleteLocation(location)}
+                        onMarkCleaned={() => handleMarkCleaned(location)}
+                        onMove={() => handleMoveLocation(location)}
+                        showSelection={uiState.bulkMode}
+                        isSelected={selectedItems.includes(location.id)}
+                        onToggleSelect={toggleSelectedItem}
+                        variant="detailed"
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="space-y-3">
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={dataState.currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={pageSize}
+                    onPageChange={handlePageChange}
+                    hasNextPage={hasNextPage}
+                    hasPreviousPage={hasPreviousPage}
+                    isLoading={locationsLoading}
+                  />
+                )}
+              </div>
+            ) : (
+              /* Grid View */
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {locations.map((location) => (
                     <LocationCard
                       key={location.id}
@@ -444,102 +479,69 @@ const HomePage: React.FC = () => {
                       showSelection={uiState.bulkMode}
                       isSelected={selectedItems.includes(location.id)}
                       onToggleSelect={toggleSelectedItem}
-                      variant="detailed"
+                      variant="minimal"
                     />
                   ))}
                 </div>
+                {totalPages > 1 && (
+                  <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
+                    <Pagination
+                      currentPage={dataState.currentPage}
+                      totalPages={totalPages}
+                      totalItems={totalItems}
+                      itemsPerPage={pageSize}
+                      onPageChange={handlePageChange}
+                      hasNextPage={hasNextPage}
+                      hasPreviousPage={hasPreviousPage}
+                      isLoading={locationsLoading}
+                    />
+                  </div>
+                )}
               </div>
-              {totalPages > 1 && (
-                <Pagination
-                  currentPage={dataState.currentPage}
-                  totalPages={totalPages}
-                  totalItems={totalItems}
-                  itemsPerPage={pageSize}
-                  onPageChange={handlePageChange}
-                  hasNextPage={hasNextPage}
-                  hasPreviousPage={hasPreviousPage}
-                  isLoading={locationsLoading}
-                />
-              )}
-            </div>
-          ) : (
-            /* Grid View */
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {locations.map((location) => (
-                  <LocationCard
-                    key={location.id}
-                    location={location}
-                    onViewChildren={handleSelectLocation}
-                    onEdit={() => handleEditLocation(location)}
-                    onDelete={() => handleDeleteLocation(location)}
-                    onMarkCleaned={() => handleMarkCleaned(location)}
-                    onMove={() => handleMoveLocation(location)}
-                    showSelection={uiState.bulkMode}
-                    isSelected={selectedItems.includes(location.id)}
-                    onToggleSelect={toggleSelectedItem}
-                    variant="minimal"
-                  />
-                ))}
-              </div>
-              {totalPages > 1 && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                  <Pagination
-                    currentPage={dataState.currentPage}
-                    totalPages={totalPages}
-                    totalItems={totalItems}
-                    itemsPerPage={pageSize}
-                    onPageChange={handlePageChange}
-                    hasNextPage={hasNextPage}
-                    hasPreviousPage={hasPreviousPage}
-                    isLoading={locationsLoading}
-                  />
-                </div>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Modals */}
-      <LocationForm
-        isOpen={uiState.isFormOpen}
-        onClose={() => {
-          updateUiState({ isFormOpen: false });
-          updateDataState({
-            selectedParentId: undefined,
-            editingLocation: null,
-          });
-        }}
-        onSubmit={
-          dataState.editingLocation
-            ? handleUpdateLocation
-            : handleCreateLocation
-        }
-        parentId={dataState.selectedParentId}
-        parentLocation={selectedLocation}
-        initialData={dataState.editingLocation || undefined}
-        isEdit={!!dataState.editingLocation}
-        isLoading={
-          dataState.editingLocation
-            ? updateLocationMutation.isPending
-            : createLocationMutation.isPending
-        }
-      />
-      <ExportDataModal
-        isOpen={uiState.isExportOpen}
-        onClose={() => updateUiState({ isExportOpen: false })}
-      />
-      <MoveLocationModal
-        isOpen={uiState.isMoveModalOpen}
-        onClose={() => {
-          updateUiState({ isMoveModalOpen: false });
-          updateDataState({ locationToMove: null });
-        }}
-        onMove={handleConfirmMove}
-        location={dataState.locationToMove}
-        isLoading={moveLocationMutation.isPending}
-      />
+        {/* Modals */}
+        <LocationForm
+          isOpen={uiState.isFormOpen}
+          onClose={() => {
+            updateUiState({ isFormOpen: false });
+            updateDataState({
+              selectedParentId: undefined,
+              editingLocation: null,
+            });
+          }}
+          onSubmit={
+            dataState.editingLocation
+              ? handleUpdateLocation
+              : handleCreateLocation
+          }
+          parentId={dataState.selectedParentId}
+          parentLocation={selectedLocation}
+          initialData={dataState.editingLocation || undefined}
+          isEdit={!!dataState.editingLocation}
+          isLoading={
+            dataState.editingLocation
+              ? updateLocationMutation.isPending
+              : createLocationMutation.isPending
+          }
+        />
+        <ExportDataModal
+          isOpen={uiState.isExportOpen}
+          onClose={() => updateUiState({ isExportOpen: false })}
+        />
+        <MoveLocationModal
+          isOpen={uiState.isMoveModalOpen}
+          onClose={() => {
+            updateUiState({ isMoveModalOpen: false });
+            updateDataState({ locationToMove: null });
+          }}
+          onMove={handleConfirmMove}
+          location={dataState.locationToMove}
+          isLoading={moveLocationMutation.isPending}
+        />
+      </div>
     </div>
   );
 };

@@ -3,8 +3,8 @@ import { useLocationTree } from "../../hooks/useApi";
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
 import Icon from "../ui/Icon";
-import Loading from "../ui/Loading";
-import type { TreeNode, Location } from "../../types";
+import LazyTreeSelector from "../ui/LazyTreeSelector";
+import type { Location } from "../../types";
 
 interface MoveLocationModalProps {
   isOpen: boolean;
@@ -21,126 +21,26 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
   location,
   isLoading = false,
 }) => {
-  const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
-  const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
+  const [selectedParentId, setSelectedParentId] = useState<string>("");
 
-  const { data: treeData, isLoading: treeLoading } = useLocationTree();
+  const { data: treeData, isLoading: treeLoading } = useLocationTree("root");
 
   useEffect(() => {
     if (location) {
-      setSelectedParentId(location.parent_id || null);
+      setSelectedParentId(
+        location.parent_id ? location.parent_id.toString() : ""
+      );
     }
   }, [location]);
 
   const handleMove = () => {
-    onMove(selectedParentId);
+    const parentId =
+      selectedParentId === "" ? null : parseInt(selectedParentId);
+    onMove(parentId);
   };
 
-  const toggleNode = (nodeId: number) => {
-    const newExpanded = new Set(expandedNodes);
-    if (newExpanded.has(nodeId)) {
-      newExpanded.delete(nodeId);
-    } else {
-      newExpanded.add(nodeId);
-    }
-    setExpandedNodes(newExpanded);
-  };
-
-  const canMoveToNode = (node: TreeNode): boolean => {
-    if (!location) return false;
-
-    // Can't move to itself
-    if (node.id === location.id) return false;
-
-    // Can't move to non-container
-    if (!node.is_container) return false;
-
-    // Can't move to its own descendants (simplified check)
-    // In a real app, you'd implement a proper descendant check
-    return true;
-  };
-
-  const renderTreeNode = (node: TreeNode, level: number = 0) => {
-    const hasChildren = node.children && node.children.length > 0;
-    const isExpanded = expandedNodes.has(node.id);
-    const isSelected = selectedParentId === node.id;
-    const canMove = canMoveToNode(node);
-
-    return (
-      <div key={node.id}>
-        <div
-          className={`tree-item flex items-center py-2 px-3 cursor-pointer rounded-md group ${
-            isSelected
-              ? "bg-primary-100 dark:bg-primary-900 border-primary-500"
-              : ""
-          } ${
-            !canMove
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-50 dark:hover:bg-gray-700"
-          }`}
-          style={{ marginRight: `${level * 20}px` }}
-          onClick={() => canMove && setSelectedParentId(node.id)}
-        >
-          {/* Expand/Collapse Button */}
-          <div className="w-5 flex items-center justify-center ml-1">
-            {hasChildren && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleNode(node.id);
-                }}
-                className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
-              >
-                <Icon
-                  name={isExpanded ? "chevron-down" : "chevron-right"}
-                  size={14}
-                  className="text-gray-400 dark:text-gray-500 "
-                />
-              </button>
-            )}
-          </div>
-
-          {/* Icon */}
-          <Icon
-            name={node.is_container ? "package" : "tag"}
-            size={16}
-            className={`text-primary-600 dark:text-white dark:group-hover:text-black ml-2 ${
-              !canMove ? "text-gray-400 dark:text-gray-500" : ""
-            }`}
-          />
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <span
-              className={`text-sm font-medium truncate ${
-                !canMove
-                  ? "text-gray-400 dark:text-gray-500"
-                  : "text-gray-900 dark:text-white dark:group-hover:text-black"
-              }`}
-            >
-              {node.name}
-            </span>
-            {!canMove && node.id === location?.id && (
-              <span className="text-xs text-red-500 dark:text-red-400 mr-2">
-                (همین مکان)
-              </span>
-            )}
-            {!canMove && !node.is_container && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 mr-2">
-                (غیر ظرف)
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Children */}
-        {hasChildren && isExpanded && (
-          <div>
-            {node.children?.map((child) => renderTreeNode(child, level + 1))}
-          </div>
-        )}
-      </div>
-    );
+  const handleTreeSelect = (value: string) => {
+    setSelectedParentId(value);
   };
 
   if (!location) return null;
@@ -168,41 +68,22 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
           <h3 className="font-medium text-gray-900 dark:text-white mb-3">
             انتخاب مکان مقصد:
           </h3>
-
-          <div
-            className={`tree-item flex items-center py-2 px-3 cursor-pointer rounded-md mb-3 group ${
-              selectedParentId === null
-                ? "bg-primary-100 dark:bg-primary-900 border-primary-500"
-                : "hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-            onClick={() => setSelectedParentId(null)}
-          >
-            <Icon
-              name="home"
-              size={16}
-              className="text-primary-600 dark:text-primary-400 ml-2"
-            />
-            <span className="text-sm font-medium text-gray-900 dark:text-white dark:group-hover:text-black">
-              ریشه (بدون والد)
-            </span>
-          </div>
         </div>
 
         {/* Tree View */}
-        <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 max-h-64 overflow-y-auto">
-          {treeLoading ? (
-            <Loading text="بارگذاری درخت مکان‌ها..." />
-          ) : treeData && treeData.length > 0 ? (
-            <div>{treeData.map((node) => renderTreeNode(node))}</div>
-          ) : (
-            <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-              مکانی برای انتخاب موجود نیست
-            </div>
-          )}
-        </div>
+        <LazyTreeSelector
+          rootData={treeData}
+          isRootLoading={treeLoading}
+          selectedValue={selectedParentId}
+          onSelect={handleTreeSelect}
+          showRoot={true}
+          rootLabel="ریشه (بدون والد)"
+          emptyMessage="مکانی برای انتخاب موجود نیست"
+          filterContainers={true}
+        />
 
         {/* Selected Location Preview */}
-        {selectedParentId && (
+        {selectedParentId && selectedParentId !== "" && (
           <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
             <div className="flex items-start">
               <Icon
@@ -212,23 +93,7 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
               />
               <div className="text-sm text-blue-800 dark:text-blue-200">
                 <p className="font-medium">مکان انتخاب شده:</p>
-                <p>
-                  {treeData &&
-                    (() => {
-                      const findNode = (nodes: TreeNode[]): TreeNode | null => {
-                        for (const node of nodes) {
-                          if (node.id === selectedParentId) return node;
-                          if (node.children) {
-                            const found = findNode(node.children);
-                            if (found) return found;
-                          }
-                        }
-                        return null;
-                      };
-                      const selectedNode = findNode(treeData);
-                      return selectedNode ? selectedNode.breadcrumb : "نامشخص";
-                    })()}
-                </p>
+                <p>مکان شماره {selectedParentId}</p>
               </div>
             </div>
           </div>
@@ -246,7 +111,9 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
           <Button
             onClick={handleMove}
             loading={isLoading}
-            disabled={selectedParentId === (location.parent_id || null)}
+            disabled={
+              selectedParentId === (location?.parent_id?.toString() || "")
+            }
             text="جابجایی"
           />
         </div>

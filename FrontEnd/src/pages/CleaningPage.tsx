@@ -64,9 +64,9 @@ const CleaningPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-6 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
           <Loading text="بارگذاری مکان‌های نیازمند تمیزکاری..." />
         </div>
       </div>
@@ -75,23 +75,23 @@ const CleaningPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="p-6 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border dark:border-slate-700">
             <Icon
               name="alert-circle"
               size={64}
-              className="mx-auto text-red-400 mb-6"
+              className="mx-auto text-red-400 dark:text-red-500 mb-6"
             />
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               خطا در بارگذاری
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               متاسفانه در بارگذاری اطلاعات مشکلی پیش آمده است
             </p>
             <Button
               onClick={() => window.location.reload()}
-              className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
+              className="bg-gray-600 dark:bg-gray-400 hover:bg-gray-700 dark:hover:bg-gray-300"
               text="تلاش مجدد"
             />
           </div>
@@ -103,10 +103,10 @@ const CleaningPage: React.FC = () => {
   const locations = cleaningData?.results || [];
 
   return (
-    <div className="p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="space-y-6">
+      <div className="space-y-6 max-w-7xl mx-auto">
         {/* Modern Header Section */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg border border-white/20 p-8 mb-8">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div className="mb-6 lg:mb-0">
               <div className="flex items-center space-x-3 space-x-reverse mb-3">
@@ -114,14 +114,14 @@ const CleaningPage: React.FC = () => {
                   <Icon name="check-circle" size={24} className="text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mr-2">
                     مدیریت تمیزکاری
                   </h1>
-                  <div className="flex items-center space-x-2 space-x-reverse mt-1">
-                    <span className="text-gray-600">
+                  <div className="flex items-center space-x-2 space-x-reverse mt-2">
+                    <span className="text-gray-600 dark:text-gray-300">
                       مکان‌های نیازمند تمیزکاری
                     </span>
-                    <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm font-medium border border-blue-200 dark:border-blue-700 mr-1">
                       {locations.length} مورد
                     </span>
                   </div>
@@ -133,13 +133,13 @@ const CleaningPage: React.FC = () => {
             {locations.length > 0 && (
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 sm:space-x-reverse">
                 {/* View Toggle */}
-                <div className="flex bg-gray-100 rounded-xl p-1">
+                <div className="flex bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all ${
                       viewMode === "grid"
-                        ? "bg-white text-blue-600 shadow-sm"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
                     <Icon name="grid" size={16} className="ml-2" />
@@ -147,10 +147,10 @@ const CleaningPage: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all ${
                       viewMode === "list"
-                        ? "bg-white text-blue-600 shadow-sm"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
                     <Icon name="list" size={16} className="ml-2" />
@@ -162,7 +162,7 @@ const CleaningPage: React.FC = () => {
                 <Button
                   variant="outline"
                   onClick={isAllSelected ? handleSelectNone : handleSelectAll}
-                  className="bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white hover:border-gray-300"
+                  className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                   icon={
                     <Icon
                       name={isAllSelected ? "x" : "check-circle"}
@@ -178,7 +178,7 @@ const CleaningPage: React.FC = () => {
                   <Button
                     onClick={handleBulkMarkCleaned}
                     loading={bulkOperationMutation.isPending}
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg"
+                    className="bg-gray-600 dark:bg-gray-400 hover:bg-gray-700 dark:hover:bg-gray-300"
                     icon={
                       <Icon name="check-circle" size={16} className="ml-2" />
                     }
@@ -192,21 +192,21 @@ const CleaningPage: React.FC = () => {
 
         {/* Selection Info Banner */}
         {selectedItems.length > 0 && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-2xl p-6 mb-8 backdrop-blur-sm">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 space-x-reverse">
-                <div className="p-2 bg-blue-100 rounded-xl">
+                <div className="p-2 bg-blue-100 dark:bg-blue-800/50 rounded-lg">
                   <Icon
                     name="check-circle"
-                    className="text-blue-600"
+                    className="text-blue-600 dark:text-blue-400"
                     size={20}
                   />
                 </div>
                 <div>
-                  <span className="text-blue-900 font-semibold text-lg">
+                  <span className="text-blue-900 dark:text-blue-200 font-semibold text-lg">
                     {selectedItems.length} مورد انتخاب شده
                   </span>
-                  <p className="text-blue-700 text-sm mt-1">
+                  <p className="text-blue-700 dark:text-blue-300 text-sm mt-1">
                     آماده برای عملیات دسته‌جمعی
                   </p>
                 </div>
@@ -214,7 +214,7 @@ const CleaningPage: React.FC = () => {
               <Button
                 variant="ghost"
                 onClick={clearSelection}
-                className="text-blue-600 hover:text-blue-800 hover:bg-blue-100/50"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 hover:bg-blue-100/50 dark:hover:bg-blue-800/30"
                 icon={<Icon name="x" size={16} className="ml-1" />}
                 text="لغو انتخاب"
               />
@@ -225,30 +225,29 @@ const CleaningPage: React.FC = () => {
         {/* Content Area */}
         {locations.length === 0 ? (
           /* Empty State */
-          <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg border border-white/20 p-16 text-center">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-12 text-center">
             <div className="max-w-md mx-auto">
-              <div className="relative mb-8">
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur-3xl opacity-20"></div>
-                <div className="relative p-6 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full inline-block">
+              <div className="mb-8">
+                <div className="p-6 bg-green-100 dark:bg-green-900/30 rounded-full inline-block">
                   <Icon
                     name="check-circle"
-                    size={64}
-                    className="text-green-600"
+                    size={48}
+                    className="text-green-600 dark:text-green-400"
                   />
                 </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                 🎉 عالی! همه چیز تمیز است
               </h3>
-              <p className="text-gray-600 mb-8 text-lg">
+              <p className="text-gray-600 dark:text-gray-300 mb-8">
                 هیچ مکانی نیاز به تمیزکاری ندارد
               </p>
 
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-2xl p-6">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4">
                 <div className="flex items-center justify-center space-x-3 space-x-reverse">
                   <span className="text-2xl">💡</span>
-                  <p className="text-green-800 font-medium">
+                  <p className="text-green-800 dark:text-green-300 font-medium">
                     می‌توانید از صفحه آمار وضعیت کلی سیستم را مشاهده کنید
                   </p>
                 </div>
@@ -257,7 +256,7 @@ const CleaningPage: React.FC = () => {
           </div>
         ) : (
           /* Locations Grid/List */
-          <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg border border-white/20 p-8">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
             <div
               className={`grid gap-6 ${
                 viewMode === "grid"
@@ -286,8 +285,8 @@ const CleaningPage: React.FC = () => {
                       <div
                         className={`w-6 h-6 rounded-lg border-2 transition-all duration-200 flex items-center justify-center ${
                           selectedItems.includes(location.id)
-                            ? "bg-blue-500 border-blue-500 shadow-lg"
-                            : "bg-white/80 border-gray-300 hover:border-blue-400 backdrop-blur-sm"
+                            ? "bg-blue-500 dark:bg-blue-600 border-blue-500 dark:border-blue-600 shadow-lg"
+                            : "bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-500 hover:border-blue-400 dark:hover:border-blue-500"
                         }`}
                       >
                         {selectedItems.includes(location.id) && (
@@ -320,27 +319,35 @@ const CleaningPage: React.FC = () => {
         )}
 
         {/* Tips Section */}
-        <div className="mt-8 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200/50 rounded-2xl p-6 backdrop-blur-sm">
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl p-6">
           <div className="flex items-start space-x-4 space-x-reverse">
-            <div className="p-2 bg-amber-100 rounded-xl flex-shrink-0">
-              <Icon name="alert-circle" className="text-amber-600" size={20} />
+            <div className="p-2 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex-shrink-0">
+              <Icon
+                name="alert-circle"
+                className="text-amber-600 dark:text-amber-400"
+                size={20}
+              />
             </div>
             <div className="flex-1">
-              <h4 className="text-amber-900 font-semibold mb-3 text-lg">
+              <h4 className="text-amber-900 dark:text-amber-300 font-semibold mb-3 text-lg">
                 💡 نکات مفید
               </h4>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <div className="flex items-start space-x-2 space-x-reverse">
-                    <span className="text-amber-600 mt-1">•</span>
-                    <p className="text-amber-800 text-sm">
+                    <span className="text-amber-600 dark:text-amber-400 mt-1">
+                      •
+                    </span>
+                    <p className="text-amber-800 dark:text-amber-200 text-sm">
                       مکان‌ها براساس آخرین زمان تمیزکاری و دوره تعریف شده نمایش
                       داده می‌شوند
                     </p>
                   </div>
                   <div className="flex items-start space-x-2 space-x-reverse">
-                    <span className="text-amber-600 mt-1">•</span>
-                    <p className="text-amber-800 text-sm">
+                    <span className="text-amber-600 dark:text-amber-400 mt-1">
+                      •
+                    </span>
+                    <p className="text-amber-800 dark:text-amber-200 text-sm">
                       می‌توانید چندین مکان را همزمان به عنوان تمیز علامت‌گذاری
                       کنید
                     </p>
@@ -348,14 +355,18 @@ const CleaningPage: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-start space-x-2 space-x-reverse">
-                    <span className="text-amber-600 mt-1">•</span>
-                    <p className="text-amber-800 text-sm">
+                    <span className="text-amber-600 dark:text-amber-400 mt-1">
+                      •
+                    </span>
+                    <p className="text-amber-800 dark:text-amber-200 text-sm">
                       دوره تمیزکاری هر مکان را در بخش ویرایش تنظیم کنید
                     </p>
                   </div>
                   <div className="flex items-start space-x-2 space-x-reverse">
-                    <span className="text-amber-600 mt-1">•</span>
-                    <p className="text-amber-800 text-sm">
+                    <span className="text-amber-600 dark:text-amber-400 mt-1">
+                      •
+                    </span>
+                    <p className="text-amber-800 dark:text-amber-200 text-sm">
                       از نمای شبکه‌ای یا لیستی برای مشاهده بهتر استفاده کنید
                     </p>
                   </div>

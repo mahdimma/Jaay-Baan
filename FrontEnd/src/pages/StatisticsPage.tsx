@@ -49,20 +49,24 @@ const StatisticsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin mx-auto mb-4"></div>
             <div
-              className="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-purple-400 rounded-full animate-spin mx-auto"
+              className="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-purple-400 dark:border-r-purple-600 rounded-full animate-spin mx-auto"
               style={{
                 animationDirection: "reverse",
                 animationDuration: "1.5s",
               }}
             ></div>
           </div>
-          <p className="text-lg font-medium text-gray-700">بارگذاری آمار...</p>
-          <p className="text-sm text-gray-500 mt-1">لطفاً صبر کنید</p>
+          <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+            بارگذاری آمار...
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            لطفاً صبر کنید
+          </p>
         </div>
       </div>
     );
@@ -70,15 +74,19 @@ const StatisticsPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center border border-red-100">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Icon name="alert-circle" size={40} className="text-red-500" />
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 max-w-md w-full text-center border border-red-100 dark:border-red-800">
+          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Icon
+              name="alert-circle"
+              size={40}
+              className="text-red-500 dark:text-red-400"
+            />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
             خطا در بارگذاری آمار
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
             متأسفانه در دریافت اطلاعات مشکلی پیش آمده است
           </p>
           <Button onClick={() => window.location.reload()} className="w-full">
@@ -97,19 +105,10 @@ const StatisticsPage: React.FC = () => {
   const { totalValue, valuesByType } = memoizedData;
 
   return (
-    <div className="min-h-screen">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "2s" }}
-        ></div>
-      </div>
-
-      <div className="relative space-y-8 p-6 lg:p-8">
+    <div className="space-y-8">
+      <div className="space-y-8">
         {/* Modern Header */}
-        <div className="backdrop-blur-sm bg-white/80 rounded-3xl shadow-xl border border-white/50 p-8">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div className="mb-6 lg:mb-0">
               <div className="flex items-center space-x-3 space-x-reverse mb-3">
@@ -117,10 +116,10 @@ const StatisticsPage: React.FC = () => {
                   <Icon name="bar-chart" size={24} className="text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                     آمار سیستم
                   </h1>
-                  <p className="text-lg text-gray-600 mt-1">
+                  <p className="text-lg text-gray-600 dark:text-gray-300 mt-1">
                     نمای کلی و تحلیل هوشمند داده‌های سیستم
                   </p>
                 </div>
@@ -132,7 +131,7 @@ const StatisticsPage: React.FC = () => {
               <Button
                 variant="outline"
                 onClick={() => setIsExportOpen(true)}
-                className="bg-white/80 border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl mr-2"
+                className="hover:bg-blue-50 dark:hover:bg-slate-600 transition-all duration-300"
               >
                 <Icon name="download" size={16} className="ml-2" />
                 خروجی آمار
@@ -144,169 +143,165 @@ const StatisticsPage: React.FC = () => {
         {/* Enhanced Key Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {/* Total Locations Card */}
-          <div className="group relative overflow-hidden bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-            <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-            <div className="relative p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <p className="text-blue-100 text-sm font-medium mb-2">
-                    کل مکان‌ها
-                  </p>
-                  <p className="text-4xl font-bold text-white mb-1 animate-pulse">
-                    {stats.total_locations.toLocaleString()}
-                  </p>
-                  <p className="text-blue-200 text-xs">
-                    در {Object.keys(stats.by_type).length} دسته‌بندی
-                  </p>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                  <Icon name="layers" size={28} className="text-white" />
-                </div>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1">
+                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">
+                  کل مکان‌ها
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {stats.total_locations.toLocaleString()}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                  در {Object.keys(stats.by_type).length} دسته‌بندی
+                </p>
               </div>
-              <div className="h-1 bg-white/20 rounded-full overflow-hidden">
-                <div className="h-full bg-white/40 rounded-full w-full transform translate-x-0 transition-transform duration-1000 shadow-sm"></div>
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                <Icon
+                  name="layers"
+                  size={20}
+                  className="text-blue-600 dark:text-blue-400"
+                />
               </div>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
+              <div className="bg-blue-600 h-2 rounded-full w-full"></div>
             </div>
           </div>
 
           {/* Containers Card */}
-          <div className="group relative overflow-hidden bg-gradient-to-br from-green-500 via-green-600 to-emerald-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-            <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-            <div className="relative p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <p className="text-green-100 text-sm font-medium mb-2">
-                    نگهدارنده‌ها
-                  </p>
-                  <p className="text-4xl font-bold text-white mb-1 animate-pulse">
-                    {stats.containers.toLocaleString()}
-                  </p>
-                  <p className="text-green-200 text-xs">
-                    {((stats.containers / stats.total_locations) * 100).toFixed(
-                      1
-                    )}
-                    % از کل
-                  </p>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                  <Icon name="package" size={28} className="text-white" />
-                </div>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1">
+                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">
+                  نگهدارنده‌ها
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {stats.containers.toLocaleString()}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                  {((stats.containers / stats.total_locations) * 100).toFixed(
+                    1
+                  )}
+                  % از کل
+                </p>
               </div>
-              <div className="h-1 bg-white/20 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-white/40 rounded-full transition-all duration-1000 shadow-sm"
-                  style={{
-                    width: `${
-                      (stats.containers / stats.total_locations) * 100
-                    }%`,
-                  }}
-                ></div>
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                <Icon
+                  name="package"
+                  size={20}
+                  className="text-green-600 dark:text-green-400"
+                />
               </div>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
+              <div
+                className="bg-green-600 h-2 rounded-full"
+                style={{
+                  width: `${(stats.containers / stats.total_locations) * 100}%`,
+                }}
+              ></div>
             </div>
           </div>
 
           {/* Items Card */}
-          <div className="group relative overflow-hidden bg-gradient-to-br from-purple-500 via-purple-600 to-violet-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-            <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-            <div className="relative p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <p className="text-purple-100 text-sm font-medium mb-2">
-                    آیتم‌ها
-                  </p>
-                  <p className="text-4xl font-bold text-white mb-1 animate-pulse">
-                    {stats.items.toLocaleString()}
-                  </p>
-                  <p className="text-purple-200 text-xs">
-                    {((stats.items / stats.total_locations) * 100).toFixed(1)}%
-                    از کل
-                  </p>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                  <Icon name="tag" size={28} className="text-white" />
-                </div>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1">
+                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">
+                  آیتم‌ها
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {stats.items.toLocaleString()}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                  {((stats.items / stats.total_locations) * 100).toFixed(1)}% از
+                  کل
+                </p>
               </div>
-              <div className="h-1 bg-white/20 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-white/40 rounded-full transition-all duration-1000 shadow-sm"
-                  style={{
-                    width: `${(stats.items / stats.total_locations) * 100}%`,
-                  }}
-                ></div>
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                <Icon
+                  name="tag"
+                  size={20}
+                  className="text-purple-600 dark:text-purple-400"
+                />
               </div>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
+              <div
+                className="bg-purple-600 h-2 rounded-full"
+                style={{
+                  width: `${(stats.items / stats.total_locations) * 100}%`,
+                }}
+              ></div>
             </div>
           </div>
 
           {/* Cleaning Needed Card */}
-          <div className="group relative overflow-hidden bg-gradient-to-br from-orange-500 via-red-500 to-pink-600 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-            <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-            <div className="relative p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <p className="text-orange-100 text-sm font-medium mb-2">
-                    نیاز به تمیزکاری
-                  </p>
-                  <p className="text-4xl font-bold text-white mb-1 animate-pulse">
-                    {stats.locations_needing_cleaning.toLocaleString()}
-                  </p>
-                  <p className="text-orange-200 text-xs">
-                    {(
-                      (stats.locations_needing_cleaning /
-                        stats.total_locations) *
-                      100
-                    ).toFixed(1)}
-                    % از کل
-                  </p>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                  <Icon name="alert-circle" size={28} className="text-white" />
-                </div>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1">
+                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">
+                  نیاز به تمیزکاری
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {stats.locations_needing_cleaning.toLocaleString()}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                  {(
+                    (stats.locations_needing_cleaning / stats.total_locations) *
+                    100
+                  ).toFixed(1)}
+                  % از کل
+                </p>
               </div>
-              <div className="h-1 bg-white/20 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-white/40 rounded-full transition-all duration-1000 shadow-sm"
-                  style={{
-                    width: `${
-                      (stats.locations_needing_cleaning /
-                        stats.total_locations) *
-                      100
-                    }%`,
-                  }}
-                ></div>
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                <Icon
+                  name="alert-circle"
+                  size={20}
+                  className="text-orange-600 dark:text-orange-400"
+                />
               </div>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
+              <div
+                className="bg-orange-600 h-2 rounded-full"
+                style={{
+                  width: `${
+                    (stats.locations_needing_cleaning / stats.total_locations) *
+                    100
+                  }%`,
+                }}
+              ></div>
             </div>
           </div>
         </div>
 
         {/* Enhanced Additional Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="group backdrop-blur-sm bg-white/80 rounded-3xl shadow-xl border border-white/50 p-8 hover:shadow-2xl hover:scale-105 transition-all duration-300">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                 تصاویر و مدارک
               </h3>
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 shadow-lg">
-                <Icon name="image" className="text-white" size={26} />
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <Icon name="image" className="text-white" size={20} />
               </div>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 hover:shadow-md transition-shadow duration-300">
-                <span className="text-gray-700 font-medium">
+              <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">
                   مکان‌های دارای تصویر
                 </span>
-                <span className="text-3xl font-bold text-blue-600 animate-pulse">
+                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {stats.locations_with_images}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 hover:shadow-md transition-shadow duration-300">
-                <span className="text-gray-700 font-medium">
+              <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">
                   درصد پوشش تصویر
                 </span>
-                <span className="text-3xl font-bold text-blue-600 animate-pulse">
+                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {(
                     (stats.locations_with_images / stats.total_locations) *
                     100
@@ -317,29 +312,29 @@ const StatisticsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="group backdrop-blur-sm bg-white/80 rounded-3xl shadow-xl border border-white/50 p-8 hover:shadow-2xl hover:scale-105 transition-all duration-300">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                 بارکدها
               </h3>
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 shadow-lg">
-                <Icon name="camera" className="text-white" size={26} />
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                <Icon name="camera" className="text-white" size={20} />
               </div>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100 hover:shadow-md transition-shadow duration-300">
-                <span className="text-gray-700 font-medium">
+              <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">
                   مکان‌های دارای بارکد
                 </span>
-                <span className="text-3xl font-bold text-green-600 animate-pulse">
+                <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {stats.locations_with_barcode}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100 hover:shadow-md transition-shadow duration-300">
-                <span className="text-gray-700 font-medium">
+              <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">
                   درصد پوشش بارکد
                 </span>
-                <span className="text-3xl font-bold text-green-600 animate-pulse">
+                <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {(
                     (stats.locations_with_barcode / stats.total_locations) *
                     100
@@ -350,27 +345,29 @@ const StatisticsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="group backdrop-blur-sm bg-white/80 rounded-3xl shadow-xl border border-white/50 p-8 hover:shadow-2xl hover:scale-105 transition-all duration-300">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                 ارزش تخمینی
               </h3>
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 shadow-lg">
-                <Icon name="bar-chart" className="text-white" size={26} />
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center">
+                <Icon name="bar-chart" className="text-white" size={20} />
               </div>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl border border-purple-100 hover:shadow-md transition-shadow duration-300">
-                <span className="text-gray-700 font-medium">
+              <div className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">
                   کل ارزش تخمینی
                 </span>
-                <span className="text-3xl font-bold text-purple-600 animate-pulse">
+                <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                   {formatCurrency(Number(totalValue) || 0)}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl border border-purple-100 hover:shadow-md transition-shadow duration-300">
-                <span className="text-gray-700 font-medium">میانگین ارزش</span>
-                <span className="text-3xl font-bold text-purple-600 animate-pulse">
+              <div className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">
+                  میانگین ارزش
+                </span>
+                <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                   {formatCurrency(
                     stats.total_locations > 0
                       ? (Number(totalValue) || 0) / stats.total_locations
@@ -383,37 +380,37 @@ const StatisticsPage: React.FC = () => {
         </div>
 
         {/* جزئیات کامل مکان‌ها */}
-        <div className="backdrop-blur-sm bg-white/80 rounded-3xl shadow-xl border border-white/50 p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
             جزئیات کامل مکان‌ها
           </h3>
 
           <div className="overflow-x-auto rounded-xl">
             <table className="min-w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
-                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider rounded-tr-xl">
+                <tr className="bg-gray-50 dark:bg-slate-700">
+                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider rounded-tr-xl">
                     نوع مکان
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     تعداد
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     درصد
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider"></th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider rounded-tl-xl">
+                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider"></th>
+                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider rounded-tl-xl">
                     ارزش تخمینی
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
                 {Object.entries(stats.by_type)
                   .sort(([, a], [, b]) => b.count - a.count)
                   .map(([type, info]) => (
                     <tr
                       key={type}
-                      className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300"
+                      className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-300"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-3 space-x-reverse">
@@ -424,19 +421,19 @@ const StatisticsPage: React.FC = () => {
                               className="text-white"
                             />
                           </div>
-                          <span className="text-sm font-bold text-gray-900">
+                          <span className="text-sm font-bold text-gray-900 dark:text-white">
                             {locationTypeLabels[type as LocationType]}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">
                           {info.count.toLocaleString()}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2 space-x-reverse">
-                          <span className="text-sm font-bold text-gray-900">
+                          <span className="text-sm font-bold text-gray-900 dark:text-white">
                             {(
                               (info.count / stats.total_locations) *
                               100
@@ -447,7 +444,7 @@ const StatisticsPage: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2 space-x-reverse">
-                          <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden mr-2">
+                          <div className="w-16 h-2 bg-gray-200 dark:bg-slate-600 rounded-full overflow-hidden mr-2">
                             <div
                               className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transition-all duration-1000"
                               style={{
@@ -460,7 +457,7 @@ const StatisticsPage: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-sm font-bold text-gray-900 dark:text-white">
                           {formatCurrency(Number(valuesByType[type]) || 0)}
                         </span>
                       </td>
