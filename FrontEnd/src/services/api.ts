@@ -70,10 +70,19 @@ export const locationsApi = {
     return response.data;
   },
 
-  getTree: async (parentId?: number): Promise<TreeNode[]> => {
-    const params = parentId ? { parent_id: parentId } : {};
-    const response = await api.get("/locations/tree/", { params });
-    return response.data;
+  getTree: async (parentId?: number | "root"): Promise<TreeNode[]> => {
+    const params: any = {};
+    if (parentId !== undefined) {
+      params.parent_id = parentId;
+    }
+
+    // For tree view, we want all children without pagination
+    params.page_size = 500; // Large number to get all items
+
+    console.log("API getTree called with params:", params);
+    const response = await api.get("/locations/", { params });
+    console.log("API getTree response:", response.data);
+    return response.data.results || response.data;
   },
 
   getBreadcrumb: async (id: number): Promise<BreadcrumbItem[]> => {

@@ -51,13 +51,30 @@ const HomePage: React.FC = () => {
   } = useLocationStore();
 
   // API Queries
-  const { data: treeData, isLoading: treeLoading } = useLocationTree();
+  const { data: rootTreeData, isLoading: treeLoading } =
+    useLocationTree("root");
   const { data: locationsData, isLoading: locationsLoading } = useLocations({
     parent_id: currentParent || "root",
     page_size: 9,
     page: dataState.currentPage,
   });
   const { data: breadcrumbData } = useBreadcrumb(selectedLocation?.id || 0);
+
+  // Tree data state for lazy loading
+  const [treeData, setTreeData] = useState<any[]>([]);
+
+  // Initialize tree data when root data loads
+  React.useEffect(() => {
+    if (rootTreeData) {
+      const initialTreeData = rootTreeData.map((node: any) => ({
+        ...node,
+        isExpanded: false,
+        hasLoadedChildren: false,
+        isLoading: false,
+      }));
+      setTreeData(initialTreeData);
+    }
+  }, [rootTreeData]);
 
   // API Mutations
   const createLocationMutation = useCreateLocation();
@@ -380,9 +397,10 @@ const HomePage: React.FC = () => {
               <Loading text="بارگذاری..." />
             ) : (
               <TreeView
-                data={treeData || []}
+                data={treeData}
                 onNodeSelect={handleNodeSelect}
                 selectedNodeId={selectedLocation?.id}
+                onDataUpdate={setTreeData}
               />
             )}
           </div>

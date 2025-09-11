@@ -72,11 +72,18 @@ export const useLocation = (id: number) => {
   });
 };
 
-export const useLocationTree = (parentId?: number) => {
+export const useLocationTree = (parentId?: number | "root") => {
   return useQuery({
     queryKey: [...queryKeys.tree, parentId],
     queryFn: () => locationsApi.getTree(parentId),
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+// Hook for lazy loading tree nodes
+export const useLazyTreeNode = () => {
+  return useMutation({
+    mutationFn: (parentId: number) => locationsApi.getTree(parentId),
   });
 };
 
