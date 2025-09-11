@@ -111,7 +111,7 @@ class LocationMoveSerializer(serializers.Serializer):
 
 
 class LocationSearchSerializer(serializers.Serializer):
-    query = serializers.CharField(max_length=255)
+    query = serializers.CharField(max_length=255, required=False)
     location_type = serializers.CharField(max_length=50, required=False)
     needs_cleaning = serializers.BooleanField(required=False)
     has_barcode = serializers.BooleanField(required=False)

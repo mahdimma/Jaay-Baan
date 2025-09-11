@@ -175,7 +175,7 @@ def location_search(request):
     serializer = LocationSearchSerializer(data=request.query_params)
 
     if serializer.is_valid():
-        query = serializer.validated_data["query"]
+        query = serializer.validated_data.get("query")
         location_type = serializer.validated_data.get("location_type")
         needs_cleaning = serializer.validated_data.get("needs_cleaning")
         has_barcode = serializer.validated_data.get("has_barcode")
@@ -183,13 +183,26 @@ def location_search(request):
 
         queryset = Location.objects.all()
 
-        # Text search in name and description
+        # Text search in name, description, barcode, and breadcrumb path
         if query:
-            queryset = queryset.filter(
-                Q(name__icontains=query)
-                | Q(description__icontains=query)
-                | Q(barcode__icontains=query)
-            )
+            # Get all locations first to search in breadcrumbs
+            all_locations = list(queryset)
+            matching_ids = []
+
+            for location in all_locations:
+                # Search in name, description, barcode
+                if (
+                    query.lower() in location.name.lower()
+                    or (
+                        location.description
+                        and query.lower() in location.description.lower()
+                    )
+                    or (location.barcode and query.lower() in location.barcode.lower())
+                    or query.lower() in location.get_breadcrumb().lower()
+                ):
+                    matching_ids.append(location.id)
+
+            queryset = queryset.filter(id__in=matching_ids)
 
         if location_type:
             queryset = queryset.filter(location_type=location_type)
