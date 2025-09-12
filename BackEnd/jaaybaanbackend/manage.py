@@ -7,9 +7,11 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    # Use production settings by default in containerized environment
+    # Use development settings by default for local development
+    # Only use production settings if explicitly set via environment variable
     if os.getenv("DJANGO_SETTINGS_MODULE") is None:
-        if os.getenv("DEBUG", "False").lower() == "false":
+        # Check if we're in a containerized environment (Docker)
+        if os.path.exists("/.dockerenv") or os.getenv("DJANGO_ENV") == "production":
             os.environ.setdefault(
                 "DJANGO_SETTINGS_MODULE", "jaaybaanbackend.settings_prod"
             )
