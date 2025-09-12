@@ -9,15 +9,6 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
-        libjpeg-dev \
-        libpng-dev \
-        libtiff-dev \
-        libfreetype6-dev \
-        liblcms2-dev \
-        libwebp-dev \
-        libharfbuzz-dev \
-        libfribidi-dev \
-        libxcb1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
