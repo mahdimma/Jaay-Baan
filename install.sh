@@ -140,24 +140,29 @@ if [ "$DOWNLOAD_SUCCESS" = false ]; then
             npm run build
             if [ -d "dist" ]; then
                 if command -v zip >/dev/null 2>&1; then
-                    cd dist && zip -r ../../frontend-dist.zip . && cd ../..
+                    cd dist && zip -r ../../frontend-dist.zip . && cd ..
                 else
-                    # Alternative for systems without zip
-                    cd dist && tar -czf ../../frontend-dist.tar.gz . && cd ../..
+                    # Alternative for systems without zip - create tar.gz but name it .zip for consistency
+                    cd dist && tar -czf ../../frontend-dist.tar.gz . && cd ..
+                    # Move back to main directory and rename the file
+                    cd ..
                     mv frontend-dist.tar.gz frontend-dist.zip
+                    cd FrontEnd
                 fi
+                cd ..
                 echo "✅ Frontend built locally"
                 DOWNLOAD_SUCCESS=true
             else
                 echo "❌ Frontend build failed - no dist directory created"
+                cd ..
                 exit 1
             fi
         else
             echo "❌ npm not found. Please install Node.js or download a release manually."
             echo "   Download from: https://github.com/mahdimma/Jaay-Baan/releases/latest"
+            cd ..
             exit 1
         fi
-        cd ..
     else
         echo "❌ No FrontEnd directory found and could not download release."
         echo "   Please ensure internet connection or download manually from:"
@@ -170,37 +175,101 @@ fi
 
 # Extract frontend
 echo "📂 Extracting frontend..."
-if command -v unzip >/dev/null 2>&1; then
-    # Test the ZIP file first
-    if unzip -t frontend-dist.zip >/dev/null 2>&1; then
-        # Clear any existing static files
-        rm -rf BackEnd/jaaybaanbackend/static/*
-        if unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/static/; then
-            rm frontend-dist.zip
-            echo "✅ Frontend extracted successfully"
+
+# Check if the file is a ZIP or TAR.GZ (for local builds without zip command)
+if command -v file >/dev/null 2>&1; then
+    FILE_TYPE=$(file frontend-dist.zip)
+    if echo "$FILE_TYPE" | grep -q "gzip compressed"; then
+        # It's actually a tar.gz file, extract with tar
+        echo "   Detected compressed archive (tar.gz format)"
+        if command -v tar >/dev/null 2>&1; then
+            # Clear any existing static files
+            rm -rf BackEnd/jaaybaanbackend/static/*
+            if tar -xzf frontend-dist.zip -C BackEnd/jaaybaanbackend/static/; then
+                rm frontend-dist.zip
+                echo "✅ Frontend extracted successfully"
+            else
+                echo "❌ Failed to extract frontend archive"
+                exit 1
+            fi
         else
-            echo "❌ Failed to extract frontend archive"
+            echo "❌ tar not found. Cannot extract compressed archive."
+            exit 1
+        fi
+    elif echo "$FILE_TYPE" | grep -q "Zip archive\|ZIP archive"; then
+        # It's a proper ZIP file
+        echo "   Detected ZIP archive"
+        if command -v unzip >/dev/null 2>&1; then
+            # Test the ZIP file first
+            if unzip -t frontend-dist.zip >/dev/null 2>&1; then
+                # Clear any existing static files
+                rm -rf BackEnd/jaaybaanbackend/static/*
+                if unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/static/; then
+                    rm frontend-dist.zip
+                    echo "✅ Frontend extracted successfully"
+                else
+                    echo "❌ Failed to extract frontend archive"
+                    exit 1
+                fi
+            else
+                echo "❌ Frontend archive is corrupted or invalid"
+                echo "   Please try running the script again or build locally"
+                rm -f frontend-dist.zip
+                exit 1
+            fi
+        else
+            echo "❌ unzip not found. Please install unzip."
+            case $OS in
+                "linux")
+                    echo "   Install: sudo apt-get install unzip (Debian/Ubuntu)"
+                    echo "            sudo yum install unzip (RHEL/CentOS)"
+                    echo "            sudo pacman -S unzip (Arch)"
+                    ;;
+                "macos")
+                    echo "   Install: brew install unzip"
+                    ;;
+            esac
             exit 1
         fi
     else
-        echo "❌ Frontend archive is corrupted or invalid"
-        echo "   Please try running the script again or build locally"
-        rm -f frontend-dist.zip
+        echo "❌ Unknown file format: $FILE_TYPE"
+        echo "   Expected ZIP archive or compressed tar file"
         exit 1
     fi
 else
-    echo "❌ unzip not found. Please install unzip."
-    case $OS in
-        "linux")
-            echo "   Install: sudo apt-get install unzip (Debian/Ubuntu)"
-            echo "            sudo yum install unzip (RHEL/CentOS)"
-            echo "            sudo pacman -S unzip (Arch)"
-            ;;
-        "macos")
-            echo "   Install: brew install unzip"
-            ;;
-    esac
-    exit 1
+    # Fallback when 'file' command is not available
+    echo "   Attempting ZIP extraction (file command not available)"
+    if command -v unzip >/dev/null 2>&1; then
+        # Try unzip first
+        if unzip -t frontend-dist.zip >/dev/null 2>&1; then
+            # Clear any existing static files
+            rm -rf BackEnd/jaaybaanbackend/static/*
+            if unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/static/; then
+                rm frontend-dist.zip
+                echo "✅ Frontend extracted successfully"
+            else
+                echo "❌ Failed to extract frontend archive"
+                exit 1
+            fi
+        elif command -v tar >/dev/null 2>&1; then
+            # Try tar if unzip fails
+            echo "   ZIP test failed, trying tar extraction"
+            rm -rf BackEnd/jaaybaanbackend/static/*
+            if tar -xzf frontend-dist.zip -C BackEnd/jaaybaanbackend/static/; then
+                rm frontend-dist.zip
+                echo "✅ Frontend extracted successfully"
+            else
+                echo "❌ Failed to extract frontend archive"
+                exit 1
+            fi
+        else
+            echo "❌ Cannot extract archive - neither unzip nor tar available"
+            exit 1
+        fi
+    else
+        echo "❌ unzip not found. Please install unzip."
+        exit 1
+    fi
 fi
 
 # Setup environment file
