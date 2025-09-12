@@ -1,15 +1,14 @@
 # Multi-stage build for production optimization
-FROM python:3.12-slim-bookworm as builder
+FROM python:3.12-slim as builder
+
+# Copy uv from the official image
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Install system dependencies needed for building
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
-    curl \
     && rm -rf /var/lib/apt/lists/*
-
-# Install uv for faster package management
-RUN pip install uv
 
 WORKDIR /app
 
@@ -32,7 +31,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
 
 # Production stage - use slim Python image for smaller size
-FROM python:3.12-slim-bookworm as runtime
+FROM python:3.12-slim as runtime
 
 # Install runtime dependencies with latest security patches
 RUN apt-get update && apt-get install -y \
