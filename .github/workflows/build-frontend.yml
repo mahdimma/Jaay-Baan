@@ -24,6 +24,14 @@ jobs:
           cd FrontEnd
           npm ci
 
+      - name: Debug - Check lib files
+        run: |
+          cd FrontEnd
+          echo "=== Checking for lib files ==="
+          ls -la src/lib/ || echo "❌ lib folder missing"
+          echo "=== Checking key components ==="
+          ls src/components/common/Breadcrumb.tsx 2>/dev/null && echo "✅ Breadcrumb.tsx found" || echo "❌ Breadcrumb.tsx missing"
+
       - name: Build frontend
         run: |
           cd FrontEnd

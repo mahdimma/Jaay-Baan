@@ -175,7 +175,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
   };
 
   const locationTypeOptions = Object.entries(locationTypeLabels).map(
-    ([value, label]) => ({
+    ([value, label]: [string, string]) => ({
       value,
       label,
     })

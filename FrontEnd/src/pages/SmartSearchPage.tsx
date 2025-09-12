@@ -125,7 +125,7 @@ const SmartSearchPage: React.FC = () => {
 
   const locationTypeOptions = [
     { value: "", label: "همه انواع" },
-    ...Object.entries(locationTypeLabels).map(([value, label]) => ({
+    ...Object.entries(locationTypeLabels).map(([value, label]: [string, string]) => ({
       value,
       label,
     })),
