@@ -1,5 +1,5 @@
 # Multi-stage build for production optimization
-FROM python:3.12-slim as builder
+FROM python:3.13-slim as builder
 
 # Copy uv from the official image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -31,7 +31,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
 
 # Production stage - use slim Python image for smaller size
-FROM python:3.12-slim as runtime
+FROM python:3.13-slim as runtime
 
 # Install runtime dependencies with latest security patches
 RUN apt-get update && apt-get install -y \
