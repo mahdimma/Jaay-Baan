@@ -25,39 +25,45 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const validateFiles = (files: FileList): boolean => {
-    setError("");
+  const validateFiles = useCallback(
+    (files: FileList): boolean => {
+      setError("");
 
-    if (files.length > maxFiles) {
-      setError(`حداکثر ${maxFiles} فایل می‌توانید انتخاب کنید`);
-      return false;
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const sizeMB = file.size / (1024 * 1024);
-
-      if (sizeMB > maxSizeMB) {
-        setError(`حجم فایل نباید بیشتر از ${maxSizeMB} مگابایت باشد`);
+      if (files.length > maxFiles) {
+        setError(`حداکثر ${maxFiles} فایل می‌توانید انتخاب کنید`);
         return false;
       }
 
-      if (!file.type.startsWith("image/")) {
-        setError("فقط فایل‌های تصویری مجاز هستند");
-        return false;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const sizeMB = file.size / (1024 * 1024);
+
+        if (sizeMB > maxSizeMB) {
+          setError(`حجم فایل نباید بیشتر از ${maxSizeMB} مگابایت باشد`);
+          return false;
+        }
+
+        if (!file.type.startsWith("image/")) {
+          setError("فقط فایل‌های تصویری مجاز هستند");
+          return false;
+        }
       }
-    }
 
-    return true;
-  };
+      return true;
+    },
+    [maxFiles, maxSizeMB]
+  );
 
-  const handleFileSelect = (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const handleFileSelect = useCallback(
+    (files: FileList | null) => {
+      if (!files || files.length === 0) return;
 
-    if (validateFiles(files)) {
-      onUpload(files);
-    }
-  };
+      if (validateFiles(files)) {
+        onUpload(files);
+      }
+    },
+    [onUpload, validateFiles]
+  );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -87,7 +93,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       const files = e.dataTransfer.files;
       handleFileSelect(files);
     },
-    [disabled]
+    [disabled, handleFileSelect]
   );
 
   return (

@@ -66,7 +66,7 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
           console.warn("Failed to start barcode scanning:", scanError);
         }
       }
-    } catch (err) {
+    } catch {
       setError("دسترسی به دوربین امکان‌پذیر نیست");
       setIsScanning(false);
     }

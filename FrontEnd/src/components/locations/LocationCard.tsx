@@ -10,6 +10,7 @@ import {
   cn,
 } from "../../lib/utils";
 import type { Location } from "../../types";
+import type { IconName } from "../../types/icon";
 import toast from "react-hot-toast";
 
 interface LocationCardProps {
@@ -204,7 +205,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
                 )}
                 <div className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
                   <Icon
-                    name={locationTypeIcon as any}
+                    name={locationTypeIcon as IconName}
                     className="text-primary-600 dark:text-primary-400"
                     size={16}
                   />
@@ -485,7 +486,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
                 <div className="flex-shrink-0 mt-0.5">
                   <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                     <Icon
-                      name={locationTypeIcon as any}
+                      name={locationTypeIcon as IconName}
                       className="text-primary-600 dark:text-primary-400"
                       size={20}
                     />

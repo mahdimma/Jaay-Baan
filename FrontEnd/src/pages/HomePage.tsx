@@ -61,12 +61,12 @@ const HomePage: React.FC = () => {
   const { data: breadcrumbData } = useBreadcrumb(selectedLocation?.id || 0);
 
   // Tree data state for lazy loading
-  const [treeData, setTreeData] = useState<any[]>([]);
+  const [treeData, setTreeData] = useState<TreeNode[]>([]);
 
   // Initialize tree data when root data loads
   React.useEffect(() => {
     if (rootTreeData) {
-      const initialTreeData = rootTreeData.map((node: any) => ({
+      const initialTreeData = rootTreeData.map((node: TreeNode) => ({
         ...node,
         isExpanded: false,
         hasLoadedChildren: false,

@@ -4,6 +4,7 @@ import { LoadingSpinner } from "../ui/Loading";
 import { locationTypeLabels, locationTypeIcons } from "../../lib/utils";
 import { useLazyTreeNode } from "../../hooks/useApi";
 import type { TreeNode } from "../../types";
+import type { IconName } from "../../types/icon";
 
 interface LazyTreeNode extends TreeNode {
   children?: LazyTreeNode[];
@@ -100,7 +101,7 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
 
         {/* Icon */}
         <Icon
-          name={locationTypeIcon as any}
+          name={locationTypeIcon as IconName}
           size={16}
           className="text-primary-600 dark:text-gray-400 ml-2"
         />

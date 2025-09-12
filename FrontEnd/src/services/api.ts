@@ -71,7 +71,7 @@ export const locationsApi = {
   },
 
   getTree: async (parentId?: number | "root"): Promise<TreeNode[]> => {
-    const params: any = {};
+    const params: Record<string, unknown> = {};
     if (parentId !== undefined) {
       params.parent_id = parentId;
     }

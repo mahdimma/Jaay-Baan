@@ -8,6 +8,7 @@ import {
   locationTypeIcons,
 } from "../lib/utils";
 import type { LocationType } from "../types";
+import type { IconName } from "../types/icon";
 
 const StatisticsPage: React.FC = () => {
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -416,7 +417,7 @@ const StatisticsPage: React.FC = () => {
                         <div className="flex items-center space-x-3 space-x-reverse">
                           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center ml-2">
                             <Icon
-                              name={locationTypeIcons[type] as any}
+                              name={locationTypeIcons[type] as IconName}
                               size={16}
                               className="text-white"
                             />

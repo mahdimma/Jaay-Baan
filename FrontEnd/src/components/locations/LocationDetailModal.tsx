@@ -8,6 +8,7 @@ import {
   cn,
 } from "../../lib/utils";
 import type { Location } from "../../types";
+import type { IconName } from "../../types/icon";
 import toast from "react-hot-toast";
 
 interface LocationDetailModalProps {
@@ -102,7 +103,7 @@ const LocationDetailModal: React.FC<LocationDetailModalProps> = ({
             {/* Icon */}
             <div className="w-16 h-16 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
               <Icon
-                name={locationTypeIcon as any}
+                name={locationTypeIcon as IconName}
                 className="text-primary-600 dark:text-primary-400"
                 size={32}
               />

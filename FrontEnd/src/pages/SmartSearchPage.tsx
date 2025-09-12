@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useLocationSearch, useLocationTree } from "../hooks/useApi";
@@ -67,10 +67,12 @@ const SmartSearchPage: React.FC = () => {
     }
   }, [searchParams.query]);
 
-  const debouncedSearch = useCallback(
-    debounce((query: unknown) => {
-      setSearchParams((prev) => ({ ...prev, query: query as string }));
-    }, 300),
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((...args: unknown[]) => {
+        const query = args[0] as string;
+        setSearchParams((prev) => ({ ...prev, query }));
+      }, 300),
     []
   );
 
@@ -80,7 +82,10 @@ const SmartSearchPage: React.FC = () => {
     debouncedSearch(value);
   };
 
-  const handleFilterChange = (key: keyof SearchParams, value: any) => {
+  const handleFilterChange = (
+    key: keyof SearchParams,
+    value: string | number | boolean | undefined
+  ) => {
     setSearchParams((prev) => ({
       ...prev,
       [key]: value === "" ? undefined : value,

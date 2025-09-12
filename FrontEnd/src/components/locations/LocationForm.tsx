@@ -153,16 +153,16 @@ const LocationForm: React.FC<LocationFormProps> = ({
   };
 
   const handleFormSubmit = (data: LocationFormData) => {
-    const submitData: any = {
+    const submitData: CreateLocationData = {
       ...data,
       parent_id: parentId,
       quantity: data.quantity || 1,
       cleaned_duration: data.cleaned_duration || 30,
     };
 
-    // Handle null value for empty value field
+    // Handle undefined value for empty value field
     if (data.value === undefined) {
-      submitData.value = null;
+      submitData.value = undefined;
     }
 
     onSubmit(submitData);

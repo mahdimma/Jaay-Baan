@@ -1,4 +1,5 @@
 import React from "react";
+import type { IconName } from "../../types/icon";
 import {
   Home,
   DoorOpen,
@@ -111,7 +112,7 @@ const iconMap = {
 };
 
 interface IconProps {
-  name: keyof typeof iconMap;
+  name: IconName;
   className?: string;
   size?: number;
 }
