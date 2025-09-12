@@ -1,12 +1,15 @@
-# Use official uv image with Python 3.13 for better performance and smaller size
-# Pin to latest stable version for reproducible builds
-FROM ghcr.io/astral-sh/uv:latest-python3.13-bookworm-slim as builder
+# Multi-stage build for production optimization
+FROM python:3.12-slim-bookworm as builder
 
 # Install system dependencies needed for building
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install uv for faster package management
+RUN pip install uv
 
 WORKDIR /app
 
@@ -28,20 +31,17 @@ COPY jaaybaanbackend/ ./jaaybaanbackend/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
 
-# Production stage - use Ubuntu LTS for better security patches
-FROM ubuntu:24.04 as runtime
+# Production stage - use slim Python image for smaller size
+FROM python:3.12-slim-bookworm as runtime
 
-# Install Python and runtime dependencies with latest security patches
+# Install runtime dependencies with latest security patches
 RUN apt-get update && apt-get install -y \
-    python3.13 \
-    python3.13-venv \
     postgresql-client \
     ca-certificates \
     && apt-get upgrade -y \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/log/* \
-    && ln -s /usr/bin/python3.13 /usr/bin/python
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/log/*
 
 # Create app user for security and set up working directory
 RUN groupadd -r app && useradd -r -g app app
