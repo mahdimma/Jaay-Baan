@@ -1,0 +1,51 @@
+name: Build Frontend
+on:
+  push:
+    branches: [main]
+    paths: ["FrontEnd/**"]
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: FrontEnd/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd FrontEnd
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd FrontEnd
+          npm run build
+
+      - name: Create dist archive
+        run: |
+          cd FrontEnd/dist
+          zip -r ../frontend-dist.zip .
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: FrontEnd/frontend-dist.zip
+
+      - name: Upload to release (if release)
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: FrontEnd/frontend-dist.zip
+          asset_name: frontend-dist.zip
+          asset_content_type: application/zip

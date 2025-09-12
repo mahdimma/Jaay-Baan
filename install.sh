@@ -1,0 +1,422 @@
+#!/bin/bash
+# install.sh - One-click installer for Jaay-Baan
+# Compatible with: Linux (all distros), macOS, Windows (WSL2)
+
+set -e
+
+echo "🏠 Installing Jaay-Baan - Physical Item Storage System"
+echo "=================================================="
+
+# Detect OS
+OS="unknown"
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    OS="linux"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    OS="macos"
+elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+    OS="windows"
+fi
+
+echo "🔍 Detected OS: $OS"
+
+# Check Docker
+echo "🐳 Checking Docker..."
+if ! command -v docker >/dev/null 2>&1; then
+    echo "❌ Docker not found!"
+    case $OS in
+        "linux")
+            echo "   Install: curl -fsSL https://get.docker.com | sh"
+            ;;
+        "macos")
+            echo "   Install: Download Docker Desktop from https://docker.com"
+            ;;
+        "windows")
+            echo "   Install: Download Docker Desktop from https://docker.com"
+            echo "   Or use WSL2 with Docker Desktop"
+            ;;
+        *)
+            echo "   Visit: https://docker.com for installation instructions"
+            ;;
+    esac
+    exit 1
+fi
+
+# Check Docker Compose (try both new and old syntax)
+echo "🔧 Checking Docker Compose..."
+DOCKER_COMPOSE_CMD=""
+if command -v "docker compose" >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+    DOCKER_COMPOSE_CMD="docker compose"
+    echo "✅ Using Docker Compose V2 (docker compose)"
+elif command -v docker-compose >/dev/null 2>&1; then
+    DOCKER_COMPOSE_CMD="docker-compose"
+    echo "✅ Using Docker Compose V1 (docker-compose)"
+else
+    echo "❌ Docker Compose not found!"
+    case $OS in
+        "linux")
+            echo "   Install V2: Usually included with Docker"
+            echo "   Install V1: curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose"
+            ;;
+        "macos"|"windows")
+            echo "   Docker Compose should be included with Docker Desktop"
+            echo "   Try restarting Docker Desktop"
+            ;;
+    esac
+    exit 1
+fi
+
+# Check if Docker is running
+if ! docker info >/dev/null 2>&1; then
+    echo "❌ Docker is not running. Please start Docker and try again."
+    exit 1
+fi
+
+echo "✅ Docker dependencies verified"
+
+# Create necessary directories
+echo "📁 Creating directories..."
+mkdir -p BackEnd/jaaybaanbackend/static/
+mkdir -p backups
+mkdir -p data/postgres
+mkdir -p data/media
+
+# Download latest frontend build
+echo "📦 Downloading latest frontend build..."
+
+# Try different download methods based on availability
+DOWNLOAD_SUCCESS=false
+
+if command -v curl >/dev/null 2>&1; then
+    echo "   Using curl..."
+    if curl -L "https://github.com/mahdimma/Jaay-Baan/releases/latest/download/frontend-dist.zip" -o frontend-dist.zip 2>/dev/null; then
+        DOWNLOAD_SUCCESS=true
+    fi
+elif command -v wget >/dev/null 2>&1; then
+    echo "   Using wget..."
+    if wget "https://github.com/mahdimma/Jaay-Baan/releases/latest/download/frontend-dist.zip" -O frontend-dist.zip 2>/dev/null; then
+        DOWNLOAD_SUCCESS=true
+    fi
+fi
+
+if [ "$DOWNLOAD_SUCCESS" = false ]; then
+    echo "⚠️  Could not download frontend from releases. Building locally..."
+    if [ -d "FrontEnd" ]; then
+        echo "🔨 Building frontend locally..."
+        cd FrontEnd
+        if command -v npm >/dev/null 2>&1; then
+            npm install
+            npm run build
+            if command -v zip >/dev/null 2>&1; then
+                cd dist && zip -r ../../frontend-dist.zip . && cd ../..
+            else
+                # Alternative for systems without zip
+                cd dist && tar -czf ../../frontend-dist.tar.gz . && cd ../..
+                mv frontend-dist.tar.gz frontend-dist.zip
+            fi
+            echo "✅ Frontend built locally"
+        else
+            echo "❌ npm not found. Please install Node.js or download a release manually."
+            echo "   Download from: https://github.com/mahdimma/Jaay-Baan/releases/latest"
+            exit 1
+        fi
+    else
+        echo "❌ No FrontEnd directory found and could not download release."
+        echo "   Please ensure internet connection or download manually from:"
+        echo "   https://github.com/mahdimma/Jaay-Baan/releases/latest"
+        exit 1
+    fi
+else
+    echo "✅ Frontend downloaded from latest release"
+fi
+
+# Extract frontend
+echo "📂 Extracting frontend..."
+if command -v unzip >/dev/null 2>&1; then
+    unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/static/
+    rm frontend-dist.zip
+    echo "✅ Frontend extracted"
+else
+    echo "❌ unzip not found. Please install unzip."
+    exit 1
+fi
+
+# Setup environment file
+echo "⚙️ Setting up environment..."
+if [ ! -f "BackEnd/.env" ]; then
+    # Generate secure random password for superuser
+    SUPERUSER_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
+    
+    cat > BackEnd/.env << EOF
+# Django Settings
+DEBUG=False
+SECRET_KEY=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
+
+# Database Settings
+DB_NAME=jaaybaan_db
+DB_USER=postgres
+DB_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-12)
+DB_HOST=db
+DB_PORT=5432
+
+# Superuser Settings (for first-time setup)
+SUPERUSER_USERNAME=admin
+SUPERUSER_EMAIL=admin@jaay-baan.local
+SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+
+# Security Settings
+ALLOWED_HOSTS=*
+CORS_ALLOWED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+
+# Media Settings
+MEDIA_URL=/media/
+STATIC_URL=/static/
+EOF
+    echo "✅ Environment file created with secure credentials"
+    echo "📝 Superuser credentials generated:"
+    echo "   Username: admin"
+    echo "   Password: ${SUPERUSER_PASSWORD}"
+    echo "   📋 Save these credentials! They will be displayed again after installation."
+else
+    echo "✅ Environment file already exists"
+fi
+
+# Source the environment file to get DB_PASSWORD
+export $(cat BackEnd/.env | grep -v '^#' | xargs)
+
+# Create docker-compose.prod.yml
+echo "🐳 Creating Docker Compose configuration..."
+
+# Create backup script
+echo "📝 Creating backup script..."
+cat > backup-script.sh << 'EOF'
+#!/bin/sh
+# Automated database backup script
+
+echo "$(date): Starting backup process..."
+timestamp=$(date +%Y%m%d_%H%M%S)
+backup_file="/backups/backup_${timestamp}.sql"
+
+# Create backup
+if pg_dump -h db -U postgres -d jaaybaan_db > "$backup_file" 2>/dev/null; then
+    echo "$(date): Backup created successfully: backup_${timestamp}.sql"
+    
+    # Compress the backup to save space
+    gzip "$backup_file"
+    echo "$(date): Backup compressed to backup_${timestamp}.sql.gz"
+    
+    # Log backup size and count
+    backup_count=$(find /backups -name 'backup_*.sql.gz' | wc -l)
+    backup_size=$(du -sh /backups 2>/dev/null | cut -f1)
+    echo "$(date): Total backups: ${backup_count}, Total size: ${backup_size}"
+else
+    echo "$(date): ERROR: Backup failed!"
+    exit 1
+fi
+
+echo "$(date): Backup process completed"
+EOF
+
+chmod +x backup-script.sh
+echo "✅ Backup script created"
+cat > docker-compose.prod.yml << EOF
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: jaaybaan_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d jaaybaan_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+
+  web:
+    build: 
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DEBUG=False
+      - DB_HOST=db
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=jaaybaan_db
+      - DB_USER=postgres
+      - DB_PORT=5432
+      - ALLOWED_HOSTS=*
+      - SECRET_KEY=${SECRET_KEY}
+      - SUPERUSER_USERNAME=${SUPERUSER_USERNAME}
+      - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
+      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+    volumes:
+      - media_data:/app/media
+      - ./BackEnd/jaaybaanbackend/static:/app/static
+    ports:
+      - "0.0.0.0:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  backup:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      PGPASSWORD: ${DB_PASSWORD}
+      PGUSER: postgres
+      PGDATABASE: jaaybaan_db
+    volumes:
+      - ./backups:/backups
+      - postgres_data:/var/lib/postgresql/data
+      - ./backup-script.sh:/backup-script.sh:ro
+    command: >
+      sh -c "
+        # Install cron
+        apk add --no-cache dcron
+        
+        # Create crontab entry for daily backups at 2 AM
+        echo '0 2 * * * /backup-script.sh' | crontab -
+        
+        # Start cron daemon
+        crond -f -d 8
+      "
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+    driver: local
+  media_data:
+    driver: local
+EOF
+
+echo "✅ Docker Compose configuration created"
+
+# Build and start services
+echo "🚀 Building and starting Jaay-Baan..."
+echo "This may take a few minutes on first run..."
+echo "Using: $DOCKER_COMPOSE_CMD"
+
+# Build images first
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml build --no-cache
+
+# Start services
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d
+
+# Wait for services to be healthy
+echo "⏳ Waiting for services to start..."
+echo "Checking database health..."
+timeout=300  # 5 minutes
+counter=0
+while [ $counter -lt $timeout ]; do
+    if $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml exec -T db pg_isready -U postgres -d jaaybaan_db >/dev/null 2>&1; then
+        echo "✅ Database is ready"
+        break
+    fi
+    sleep 5
+    counter=$((counter + 5))
+    echo -n "."
+done
+
+if [ $counter -ge $timeout ]; then
+    echo "❌ Database failed to start within 5 minutes"
+    echo "Check logs with: $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml logs db"
+    exit 1
+fi
+
+echo "Checking web service health..."
+counter=0
+while [ $counter -lt $timeout ]; do
+    if curl -f http://localhost:8000/health/ >/dev/null 2>&1; then
+        echo "✅ Web service is ready"
+        break
+    fi
+    sleep 5
+    counter=$((counter + 5))
+    echo -n "."
+done
+
+if [ $counter -ge $timeout ]; then
+    echo "❌ Web service failed to start within 5 minutes"
+    echo "Check logs with: $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml logs web"
+    exit 1
+fi
+
+# Get local IP addresses
+LOCAL_IP=$(hostname -I | awk '{print $1}' 2>/dev/null || echo "unknown")
+HOSTNAME=$(hostname 2>/dev/null || echo "unknown")
+
+# Get superuser credentials from environment file
+SUPERUSER_USERNAME=$(grep "SUPERUSER_USERNAME=" BackEnd/.env | cut -d'=' -f2)
+SUPERUSER_PASSWORD=$(grep "SUPERUSER_PASSWORD=" BackEnd/.env | cut -d'=' -f2)
+
+echo ""
+echo "🎉 Jaay-Baan is now running!"
+echo "================================="
+echo ""
+echo "🔐 Login Credentials:"
+echo "  Username: ${SUPERUSER_USERNAME:-admin}"
+echo "  Password: ${SUPERUSER_PASSWORD:-admin123}"
+echo "  ⚠️  Change password after first login!"
+echo ""
+echo "📱 Access URLs:"
+echo "  Local:     http://localhost:8000"
+echo "  Network:   http://$LOCAL_IP:8000"
+echo "  Hostname:  http://$HOSTNAME.local:8000 (if mDNS works)"
+echo ""
+echo "💾 Data Storage:"
+echo "  Database:  Docker volume 'postgres_data'"
+echo "  Media:     Docker volume 'media_data'"
+echo "  Backups:   ./backups/ (daily at 2 AM)"
+echo ""
+echo "🔧 Management Commands:"
+echo "  View logs:     $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml logs"
+echo "  Stop all:      $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml down"
+echo "  Start all:     $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d"
+echo "  Restart:       $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml restart"
+echo "  Update:        git pull && ./install.sh"
+echo ""
+echo "🗄️  Database Commands:"
+echo "  Connect:       $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml exec db psql -U postgres -d jaaybaan_db"
+echo "  Manual backup: $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml exec backup /backup-script.sh"
+echo "  Backup logs:   $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml logs backup"
+echo ""
+echo "📊 System Status:"
+echo "  Check health:  curl http://localhost:8000/health/"
+echo "  View status:   $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml ps"
+echo ""
+echo "⚠️  Important Notes:"
+echo "  - First login may take a moment as the database initializes"
+echo "  - Automated backups run daily at 2:00 AM"
+echo "  - Access from other devices using the Network URL above"
+echo "  - Data persists between restarts in Docker volumes"
+echo "  - Backups are compressed (gzipped) to save disk space"
+echo ""
+
+# Show current status
+echo "Current Status:"
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml ps

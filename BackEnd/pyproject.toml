@@ -13,4 +13,6 @@ dependencies = [
     "pillow>=10.0.0",
     "django-filter>=24.3",
     "django-cors-headers>=4.4.0",
+    "gunicorn>=21.2.0",
+    "whitenoise>=6.6.0",
 ]

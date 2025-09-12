@@ -72,6 +72,15 @@ class Location(MP_Node):
 
     class Meta:
         ordering = ["path"]
+        indexes = [
+            models.Index(fields=["path"]),
+            models.Index(fields=["location_type"]),
+            models.Index(fields=["is_container"]),
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["cleaned_time"]),
+            models.Index(fields=["barcode"]),
+            models.Index(fields=["name"]),
+        ]
 
     def __str__(self):
         return self.name
