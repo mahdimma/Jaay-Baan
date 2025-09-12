@@ -9,6 +9,15 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libtiff-dev \
+        libfreetype6-dev \
+        liblcms2-dev \
+        libwebp-dev \
+        libharfbuzz-dev \
+        libfribidi-dev \
+        libxcb1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -16,20 +25,29 @@ WORKDIR /app
 # Configure uv for optimal Docker builds
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
+ENV UV_HTTP_TIMEOUT=300
+ENV UV_CONCURRENT_DOWNLOADS=1
 
 # Copy dependency files for dependency installation layer
 COPY pyproject.toml uv.lock ./
 
 # Install dependencies first (separate layer for better caching)
+# Add retry logic for network issues
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-install-project --no-dev
+    for i in {1..3}; do \
+        uv sync --locked --no-install-project --no-dev && break || \
+        (echo "Attempt $i failed, retrying in 10 seconds..." && sleep 10); \
+    done
 
 # Copy the project source code
 COPY jaaybaanbackend/ ./jaaybaanbackend/
 
 # Install the project itself in non-editable mode for production
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-dev --no-editable
+    for i in {1..3}; do \
+        uv sync --locked --no-dev --no-editable && break || \
+        (echo "Attempt $i failed, retrying in 10 seconds..." && sleep 10); \
+    done
 
 # Production stage - use slim Python image for smaller size
 FROM python:3.13-slim as runtime
