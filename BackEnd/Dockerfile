@@ -33,17 +33,17 @@ FROM ubuntu:24.04 as runtime
 
 # Install Python and runtime dependencies with latest security patches
 RUN apt-get update && apt-get install -y \
-    python3.12 \
-    python3.12-venv \
+    python3.13 \
+    python3.13-venv \
     postgresql-client \
     ca-certificates \
     && apt-get upgrade -y \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/log/* \
-    && ln -s /usr/bin/python3.12 /usr/bin/python
+    && ln -s /usr/bin/python3.13 /usr/bin/python
 
-# Create app user for security
+# Create app user for security and set up working directory
 RUN groupadd -r app && useradd -r -g app app
 
 WORKDIR /app
@@ -54,6 +54,9 @@ COPY --from=builder --chown=app:app /app/.venv /app/.venv
 # Copy the Django project code
 COPY --from=builder --chown=app:app /app/jaaybaanbackend /app/jaaybaanbackend
 
+# Copy start script
+COPY --chown=app:app start.sh /app/start.sh
+
 # Add virtual environment to PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
@@ -62,15 +65,12 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONHASHSEED=random
 
-# Create necessary directories and set permissions
+# Create necessary directories, set permissions, and make start script executable in one layer
 RUN mkdir -p media static logs && \
     chown -R app:app /app && \
     chmod -R 755 /app && \
-    chmod -R 750 /app/media /app/static /app/logs
-
-# Copy start script and make it executable
-COPY --chown=app:app start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+    chmod -R 750 /app/media /app/static /app/logs && \
+    chmod +x /app/start.sh
 
 # Switch to app user
 USER app
