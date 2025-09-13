@@ -3,6 +3,9 @@ set -e
 
 echo "Starting Jaay-Baan Backend..."
 
+# Ensure we're using production settings
+export DJANGO_ENV=production
+
 # Change to the directory containing manage.py
 cd /app/jaaybaanbackend
 
