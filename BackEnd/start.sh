@@ -3,6 +3,9 @@ set -e
 
 echo "Starting Jaay-Baan Backend..."
 
+# Change to the directory containing manage.py
+cd /app/jaaybaanbackend
+
 # Wait for database to be ready
 echo "Waiting for database..."
 while ! pg_isready -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME}; do
