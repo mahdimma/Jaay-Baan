@@ -65,6 +65,11 @@ else
     exit 1
 fi
 
+# Ensure a stable Compose project name across invocations (docker/podman compatibility)
+PROJECT_NAME=$(basename "$PWD" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
+export COMPOSE_PROJECT_NAME="$PROJECT_NAME"
+echo "🧩 Using Compose project: $COMPOSE_PROJECT_NAME"
+
 # Check if Docker is running
 if ! docker info >/dev/null 2>&1; then
     echo "❌ Docker is not running. Please start Docker and try again."
@@ -507,7 +512,7 @@ $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml build --no-cache
 
 # Start database service first only
 echo "🗄️  Starting database service..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d db
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --no-recreate db
 
 # Wait for services to be healthy
 echo "⏳ Waiting for services to start..."
@@ -546,7 +551,7 @@ echo "✅ Database credentials verified"
 
 # Now start web and backup services
 echo "🚀 Starting web and backup services..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d web backup
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --no-recreate web backup
 
 echo "Checking web service health..."
 counter=0
