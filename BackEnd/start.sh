@@ -67,7 +67,6 @@ if not Location.objects.exists():
     # Create root locations
     home = Location.add_root(
         name="خانه",
-        name_en="Home",
         location_type="container",
         is_container=True,
         description="محل اصلی سکونت"
@@ -75,7 +74,6 @@ if not Location.objects.exists():
     
     office = Location.add_root(
         name="دفتر کار",
-        name_en="Office",
         location_type="container", 
         is_container=True,
         description="محل کار"
@@ -84,7 +82,6 @@ if not Location.objects.exists():
     # Add some sample rooms
     kitchen = home.add_child(
         name="آشپزخانه",
-        name_en="Kitchen",
         location_type="room",
         is_container=True,
         description="آشپزخانه خانه"
@@ -92,7 +89,6 @@ if not Location.objects.exists():
     
     bedroom = home.add_child(
         name="اتاق خواب",
-        name_en="Bedroom", 
         location_type="room",
         is_container=True,
         description="اتاق خواب اصلی"
@@ -101,7 +97,6 @@ if not Location.objects.exists():
     # Add some containers
     fridge = kitchen.add_child(
         name="یخچال",
-        name_en="Refrigerator",
         location_type="appliance",
         is_container=True,
         description="یخچال آشپزخانه"
@@ -109,7 +104,6 @@ if not Location.objects.exists():
     
     wardrobe = bedroom.add_child(
         name="کمد لباس",
-        name_en="Wardrobe",
         location_type="furniture", 
         is_container=True,
         description="کمد لباس اتاق خواب"

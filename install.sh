@@ -474,6 +474,7 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
+      PGHOST: db
       PGPASSWORD: ${DB_PASSWORD}
       PGUSER: postgres
       PGDATABASE: jaaybaan_db
@@ -512,7 +513,7 @@ echo "Using: $DOCKER_COMPOSE_CMD"
 # Build images first
 echo "🔨 Building application images..."
 $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml build --no-cache
-
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml down
 # Start database service first only
 echo "🗄️  Starting database service..."
 $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --no-recreate db
@@ -536,6 +537,12 @@ if [ $counter -ge $timeout ]; then
     echo "❌ Database failed to start within 5 minutes"
     echo "Check logs with: $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml logs db"
     exit 1
+fi
+# Reset the PostgreSQL password
+if $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml exec -T db psql -U postgres -c "ALTER USER postgres PASSWORD '${DB_PASSWORD}';" >/dev/null 2>&1; then
+    echo "✅ Database password updated successfully"
+else
+    echo "⚠️  Could not update database password, may already be correct"
 fi
 
 # Verify DB credentials match existing database before starting web
