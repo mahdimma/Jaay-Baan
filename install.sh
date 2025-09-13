@@ -306,7 +306,18 @@ fi
 
 # Setup environment file
 echo "⚙️ Setting up environment..."
+SAVED_DB_PASSWORD_FILE="data/postgres/.db_password"
+SAVED_DB_PASSWORD=""
+if [ -f "$SAVED_DB_PASSWORD_FILE" ]; then
+    SAVED_DB_PASSWORD=$(tr -d '\r\n' < "$SAVED_DB_PASSWORD_FILE" || true)
+fi
 if [ ! -f "BackEnd/.env" ]; then
+    # Prefer reusing saved DB password if present (to match existing volume)
+    if [ -n "$SAVED_DB_PASSWORD" ]; then
+        DB_PASSWORD="$SAVED_DB_PASSWORD"
+    else
+        DB_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-12)
+    fi
     # Generate secure random password for superuser
     SUPERUSER_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
     
@@ -318,7 +329,7 @@ SECRET_KEY=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
 # Database Settings
 DB_NAME=jaaybaan_db
 DB_USER=postgres
-DB_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-12)
+DB_PASSWORD=${DB_PASSWORD}
 DB_HOST=db
 DB_PORT=5432
 
@@ -342,6 +353,12 @@ EOF
     echo "   📋 Save these credentials! They will be displayed again after installation."
 else
     echo "✅ Environment file already exists"
+    # Extract DB_PASSWORD from existing .env to keep saved file in sync
+    DB_PASSWORD=$(grep "^DB_PASSWORD=" BackEnd/.env | cut -d'=' -f2- | tr -d '\r')
+fi
+# Persist DB password locally for future runs
+if [ -n "$DB_PASSWORD" ]; then
+    echo -n "$DB_PASSWORD" > "$SAVED_DB_PASSWORD_FILE"
 fi
 
 # Source the environment file to get DB_PASSWORD
@@ -488,8 +505,9 @@ echo "Using: $DOCKER_COMPOSE_CMD"
 echo "🔨 Building application images..."
 $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml build --no-cache
 
-# Start services
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d
+# Start database service first only
+echo "🗄️  Starting database service..."
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d db
 
 # Wait for services to be healthy
 echo "⏳ Waiting for services to start..."
@@ -511,6 +529,24 @@ if [ $counter -ge $timeout ]; then
     echo "Check logs with: $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml logs db"
     exit 1
 fi
+
+# Verify DB credentials match existing database before starting web
+echo "🔐 Verifying database credentials..."
+if ! $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml exec -T db sh -lc "PGPASSWORD='${DB_PASSWORD}' psql -h 127.0.0.1 -U postgres -d jaaybaan_db -c '\\q'" >/dev/null 2>&1; then
+    echo "❌ Django database connection failed: password authentication failed for user 'postgres'"
+    echo "Possible cause: existing postgres_data volume initialized with a different password."
+    echo "Fix options:"
+    echo "  1) Update BackEnd/.env DB_PASSWORD to the existing DB password and rerun."
+    echo "  2) Reset the database (DESTRUCTIVE): $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml down -v && ./install.sh"
+    echo "     This removes the database volume and reinitializes it with the current password."
+    exit 1
+fi
+
+echo "✅ Database credentials verified"
+
+# Now start web and backup services
+echo "🚀 Starting web and backup services..."
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d web backup
 
 echo "Checking web service health..."
 counter=0
