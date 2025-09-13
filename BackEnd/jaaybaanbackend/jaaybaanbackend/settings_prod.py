@@ -13,9 +13,8 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 # Database optimizations for PostgreSQL with large datasets (10k+ nodes)
 DATABASES["default"].update(
     {
+        "CONN_MAX_AGE": 600,  # Connection pooling - keep connections alive for 10 minutes
         "OPTIONS": {
-            "MAX_CONNS": 20,
-            "conn_max_age": 600,
             "connect_timeout": 10,
             "options": "-c default_transaction_isolation=read_committed",
         },
