@@ -3,20 +3,17 @@
 
 import os
 import sys
+from decouple import config
 
 
 def main():
     """Run administrative tasks."""
-    # Use development settings by default for local development
-    # Only use production settings if explicitly set via environment variable
+    # Dynamically select settings module based on ENV variable
     if os.getenv("DJANGO_SETTINGS_MODULE") is None:
-        # Check if we're in a containerized environment (Docker)
-        if os.path.exists("/.dockerenv") or os.getenv("DJANGO_ENV") == "production":
-            os.environ.setdefault(
-                "DJANGO_SETTINGS_MODULE", "jaaybaanbackend.settings_prod"
-            )
-        else:
-            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "jaaybaanbackend.settings")
+        env = config("ENV", "development")
+        os.environ.setdefault(
+            "DJANGO_SETTINGS_MODULE", f"jaaybaanbackend.settings.{env}"
+        )
 
     try:
         from django.core.management import execute_from_command_line

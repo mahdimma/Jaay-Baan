@@ -329,7 +329,8 @@ if [ ! -f "BackEnd/.env" ]; then
     cat > BackEnd/.env << EOF
 # Django Settings
 DEBUG=False
-SECRET_KEY=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
+SECRET_KEY=${SECRET_KEY}
+ENV=production
 
 # Database Settings
 DB_NAME=jaaybaan_db
@@ -442,6 +443,8 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
+      - DJANGO_SETTINGS_MODULE=jaaybaanbackend.settings.production
+      - ENV=production
       - DEBUG=False
       - DB_HOST=db
       - DB_PASSWORD=${DB_PASSWORD}

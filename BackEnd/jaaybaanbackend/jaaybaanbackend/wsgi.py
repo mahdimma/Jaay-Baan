@@ -8,9 +8,13 @@ https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
 """
 
 import os
+from decouple import config
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "jaaybaanbackend.settings")
+# Dynamically select settings module based on ENV variable
+if os.getenv("DJANGO_SETTINGS_MODULE") is None:
+    env = config("ENV", "development")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"jaaybaanbackend.settings.{env}")
 
 application = get_wsgi_application()
