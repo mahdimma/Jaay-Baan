@@ -1,15 +1,8 @@
 # Multi-stage build for production optimization
-FROM python:3.13-slim as builder
+FROM jaay-baan-system-deps:builder as builder
 
 # Copy uv from the official image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-
-# Install system dependencies needed for building
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -40,17 +33,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
         (echo "Attempt $i failed, retrying in 10 seconds..." && sleep 10); \
     done
 
-# Production stage - use slim Python image for smaller size
-FROM python:3.13-slim as runtime
-
-# Install runtime dependencies with latest security patches
-RUN apt-get update && apt-get install -y \
-    postgresql-client \
-    ca-certificates \
-    && apt-get upgrade -y \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/log/*
+# Production stage - use runtime system deps image for smaller size
+FROM jaay-baan-system-deps:runtime as runtime
 
 # Create app user for security and set up working directory
 RUN groupadd -r app && useradd -r -g app app

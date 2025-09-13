@@ -73,6 +73,32 @@ fi
 
 echo "✅ Docker dependencies verified"
 
+# Build system dependencies base image if it doesn't exist
+echo "🔧 Checking system dependencies base image..."
+if ! docker image inspect jaay-baan-system-deps:builder >/dev/null 2>&1 || ! docker image inspect jaay-baan-system-deps:runtime >/dev/null 2>&1; then
+    echo "📦 Building system dependencies base images..."
+    echo "This may take a few minutes on first run..."
+    
+    # Build the multi-stage system dependencies image
+    if docker build -f BackEnd/Dockerfile.system-deps --target builder -t jaay-baan-system-deps:builder BackEnd/; then
+        echo "✅ Built jaay-baan-system-deps:builder"
+    else
+        echo "❌ Failed to build system dependencies builder image"
+        exit 1
+    fi
+    
+    if docker build -f BackEnd/Dockerfile.system-deps --target runtime -t jaay-baan-system-deps:runtime BackEnd/; then
+        echo "✅ Built jaay-baan-system-deps:runtime"
+    else
+        echo "❌ Failed to build system dependencies runtime image"
+        exit 1
+    fi
+    
+    echo "✅ System dependencies base images built successfully"
+else
+    echo "✅ System dependencies base images already exist"
+fi
+
 # Create necessary directories
 echo "📁 Creating directories..."
 mkdir -p BackEnd/jaaybaanbackend/static/
@@ -460,6 +486,7 @@ echo "This may take a few minutes on first run..."
 echo "Using: $DOCKER_COMPOSE_CMD"
 
 # Build images first
+echo "🔨 Building application images..."
 $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml build --no-cache
 
 # Start services
