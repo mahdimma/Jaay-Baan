@@ -6,13 +6,23 @@ Optimized for local containerized deployment
 from .settings import *
 import os
 
+# Don't load .env file in production - use environment variables from Docker Compose
+# Override the base settings that load .env file
+
 # Security settings for production
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
-# Database optimizations for PostgreSQL with large datasets (10k+ nodes)
-DATABASES["default"].update(
-    {
+# Override database configuration to ensure environment variables are used
+# This ensures Docker Compose environment variables take precedence
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "jaaybaan_db"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
         "CONN_MAX_AGE": 600,  # Connection pooling - keep connections alive for 10 minutes
         "OPTIONS": {
             "connect_timeout": 10,
@@ -21,7 +31,7 @@ DATABASES["default"].update(
             "NAME": "test_jaaybaan_db",
         },
     }
-)
+}
 
 # Static files configuration for serving React app
 STATIC_URL = "/static/"

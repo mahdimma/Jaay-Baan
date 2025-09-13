@@ -6,6 +6,14 @@ echo "Starting Jaay-Baan Backend..."
 # Ensure we're using production settings
 export DJANGO_ENV=production
 
+# Debug: Print database connection info (without sensitive password)
+echo "Database connection details:"
+echo "  Host: ${DB_HOST}"
+echo "  Port: ${DB_PORT}"
+echo "  Database: ${DB_NAME}"
+echo "  User: ${DB_USER}"
+echo "  Password: $(echo ${DB_PASSWORD} | sed 's/./*/g')"
+
 # Change to the directory containing manage.py
 cd /app/jaaybaanbackend
 
@@ -16,6 +24,19 @@ while ! pg_isready -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME}; do
     sleep 2
 done
 echo "Database is ready!"
+
+# Test Django database connection
+echo "Testing Django database connection..."
+python manage.py shell -c "
+from django.db import connection
+try:
+    cursor = connection.cursor()
+    cursor.execute('SELECT 1')
+    print('✅ Django database connection successful')
+except Exception as e:
+    print(f'❌ Django database connection failed: {e}')
+    exit(1)
+"
 
 # Run database migrations
 echo "Running database migrations..."
