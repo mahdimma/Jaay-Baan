@@ -416,7 +416,7 @@ echo "Using: $DOCKER_COMPOSE_CMD"
 # Build images first
 echo "🔨 Building application images..."
 $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml build --no-cache
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml down
+
 # Start database service first only
 echo "🗄️  Starting database service..."
 $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --no-recreate db
@@ -464,7 +464,8 @@ echo "✅ Database credentials verified"
 
 # Now start web and backup services
 echo "🚀 Starting web and backup services..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d web backup
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml down
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up
 
 echo "Checking web service health..."
 counter=0
