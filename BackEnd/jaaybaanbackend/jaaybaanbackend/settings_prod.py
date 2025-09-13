@@ -27,7 +27,8 @@ DATABASES["default"].update(
 STATIC_URL = "/static/"
 STATIC_ROOT = "/app/static"
 
-# Serve React build files
+# Serve React build files - Django will collect them during collectstatic
+# Frontend files are placed in the main app's static directory during build
 STATICFILES_DIRS = []
 
 # Use WhiteNoise for serving static files in production
@@ -161,7 +162,8 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 ROOT_URLCONF = "jaaybaanbackend.urls_prod"
 
 # Template configuration to serve React app
-TEMPLATES[0]["DIRS"] = ["/app/static"]
+# Django templates should look in static directory for the built React app
+TEMPLATES[0]["DIRS"] = ["/app/static/frontend"]
 TEMPLATES[0]["OPTIONS"]["context_processors"].extend(
     [
         "django.template.context_processors.static",

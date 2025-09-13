@@ -101,7 +101,7 @@ fi
 
 # Create necessary directories
 echo "📁 Creating directories..."
-mkdir -p BackEnd/jaaybaanbackend/static/
+mkdir -p BackEnd/jaaybaanbackend/locations/static/frontend/
 mkdir -p backups
 mkdir -p data/postgres
 mkdir -p data/media
@@ -110,9 +110,9 @@ mkdir -p data/media
 echo "📦 Downloading latest frontend build..."
 
 # Check if frontend static files already exist
-if [ -d "BackEnd/jaaybaanbackend/static" ] && [ "$(ls -A BackEnd/jaaybaanbackend/static 2>/dev/null)" ]; then
+if [ -d "BackEnd/jaaybaanbackend/locations/static/frontend" ] && [ "$(ls -A BackEnd/jaaybaanbackend/locations/static/frontend 2>/dev/null)" ]; then
     echo "✅ Frontend static files already exist, skipping download/build"
-    echo "   To force rebuild, delete BackEnd/jaaybaanbackend/static/ directory"
+    echo "   To force rebuild, delete BackEnd/jaaybaanbackend/locations/static/frontend/ directory"
 else
     # Try different download methods based on availability
     DOWNLOAD_SUCCESS=false
@@ -215,8 +215,8 @@ else
             echo "   Detected compressed archive (tar.gz format)"
             if command -v tar >/dev/null 2>&1; then
                 # Clear any existing static files
-                rm -rf BackEnd/jaaybaanbackend/static/*
-                if tar -xzf frontend-dist.zip -C BackEnd/jaaybaanbackend/static/; then
+                rm -rf BackEnd/jaaybaanbackend/locations/static/frontend/*
+                if tar -xzf frontend-dist.zip -C BackEnd/jaaybaanbackend/locations/static/frontend/; then
                     rm frontend-dist.zip
                     echo "✅ Frontend extracted successfully"
                 else
@@ -234,8 +234,8 @@ else
                 # Test the ZIP file first
                 if unzip -t frontend-dist.zip >/dev/null 2>&1; then
                     # Clear any existing static files
-                    rm -rf BackEnd/jaaybaanbackend/static/*
-                    if unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/static/; then
+                    rm -rf BackEnd/jaaybaanbackend/locations/static/frontend/*
+                    if unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/locations/static/frontend/; then
                         rm frontend-dist.zip
                         echo "✅ Frontend extracted successfully"
                     else
@@ -274,8 +274,8 @@ else
             # Try unzip first
             if unzip -t frontend-dist.zip >/dev/null 2>&1; then
                 # Clear any existing static files
-                rm -rf BackEnd/jaaybaanbackend/static/*
-                if unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/static/; then
+                rm -rf BackEnd/jaaybaanbackend/locations/static/frontend/*
+                if unzip -o frontend-dist.zip -d BackEnd/jaaybaanbackend/locations/static/frontend/; then
                     rm frontend-dist.zip
                     echo "✅ Frontend extracted successfully"
                 else
@@ -285,8 +285,8 @@ else
             elif command -v tar >/dev/null 2>&1; then
                 # Try tar if unzip fails
                 echo "   ZIP test failed, trying tar extraction"
-                rm -rf BackEnd/jaaybaanbackend/static/*
-                if tar -xzf frontend-dist.zip -C BackEnd/jaaybaanbackend/static/; then
+                rm -rf BackEnd/jaaybaanbackend/locations/static/frontend/*
+                if tar -xzf frontend-dist.zip -C BackEnd/jaaybaanbackend/locations/static/frontend/; then
                     rm frontend-dist.zip
                     echo "✅ Frontend extracted successfully"
                 else
@@ -433,7 +433,6 @@ services:
       - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
     volumes:
       - media_data:/app/media
-      - ./BackEnd/jaaybaanbackend/static:/app/static
     ports:
       - "0.0.0.0:8000:8000"
     depends_on:
