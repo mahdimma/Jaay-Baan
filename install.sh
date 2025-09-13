@@ -554,7 +554,7 @@ echo "✅ Database credentials verified"
 
 # Now start web and backup services
 echo "🚀 Starting web and backup services..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --no-recreate web backup
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --replace web backup
 
 echo "Checking web service health..."
 counter=0
