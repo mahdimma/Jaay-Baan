@@ -16,7 +16,7 @@ DATABASES["default"].update(
         "CONN_MAX_AGE": 600,  # Connection pooling - keep connections alive for 10 minutes
         "OPTIONS": {
             "connect_timeout": 10,
-            "options": "-c default_transaction_isolation=read_committed",
+            "options": "-c default_transaction_isolation='read committed'",
         },
         "TEST": {
             "NAME": "test_jaaybaan_db",
