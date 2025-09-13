@@ -10,6 +10,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from django.views.decorators.cache import cache_page
+from django.views.static import serve
 
 
 def health_check(request):
@@ -32,12 +33,12 @@ urlpatterns = [
     path("health/", health_check, name="health-check"),
     # API endpoints
     path("api/v1/", include(api_patterns)),
-    # Media files
-    path(
-        "media/<path:path>",
-        cache_page(60 * 15)(
-            static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)[0].view
-        ),
+    # Media files - serve with caching
+    re_path(
+        r"^media/(?P<path>.*)$",
+        cache_page(60 * 15)(serve),
+        {"document_root": settings.MEDIA_ROOT},
+        name="media-files",
     ),
 ]
 
