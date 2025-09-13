@@ -325,7 +325,8 @@ if [ ! -f "BackEnd/.env" ]; then
     fi
     # Generate secure random password for superuser
     SUPERUSER_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
-    
+    SECRET_KEY =$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-32)
+
     cat > BackEnd/.env << EOF
 # Django Settings
 DEBUG=False
@@ -405,105 +406,7 @@ EOF
 
 chmod +x backup-script.sh
 echo "✅ Backup script created"
-cat > docker-compose.prod.yml << EOF
-version: '3.8'
 
-services:
-  db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: jaaybaan_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./backups:/backups
-    ports:
-      - "127.0.0.1:5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d jaaybaan_db"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
-    command: >
-      postgres
-      -c shared_buffers=256MB
-      -c effective_cache_size=1GB
-      -c maintenance_work_mem=64MB
-      -c checkpoint_completion_target=0.9
-      -c wal_buffers=16MB
-      -c default_statistics_target=100
-
-  web:
-    build: 
-      context: ./BackEnd
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    environment:
-      - DJANGO_SETTINGS_MODULE=jaaybaanbackend.settings.production
-      - ENV=production
-      - DEBUG=False
-      - DB_HOST=db
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=jaaybaan_db
-      - DB_USER=postgres
-      - DB_PORT=5432
-      - ALLOWED_HOSTS=*
-      - SECRET_KEY=${SECRET_KEY}
-      - SUPERUSER_USERNAME=${SUPERUSER_USERNAME}
-      - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
-      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
-    volumes:
-      - media_data:/app/media
-    ports:
-      - "0.0.0.0:8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  backup:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      PGHOST: db
-      PGPASSWORD: ${DB_PASSWORD}
-      PGUSER: postgres
-      PGDATABASE: jaaybaan_db
-    volumes:
-      - ./backups:/backups
-      - postgres_data:/var/lib/postgresql/data
-      - ./backup-script.sh:/backup-script.sh:ro
-    command: >
-      sh -c "
-        # Install cron
-        apk add --no-cache dcron
-        
-        # Create crontab entry for daily backups at 2 AM
-        echo '0 2 * * * /backup-script.sh' | crontab -
-        
-        # Start cron daemon
-        crond -f -d 8
-      "
-    depends_on:
-      - db
-
-volumes:
-  postgres_data:
-    driver: local
-  media_data:
-    driver: local
-EOF
-
-echo "✅ Docker Compose configuration created"
 
 # Build and start services
 echo "🚀 Building and starting Jaay-Baan..."
@@ -561,7 +464,7 @@ echo "✅ Database credentials verified"
 
 # Now start web and backup services
 echo "🚀 Starting web and backup services..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --replace web backup
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d web backup
 
 echo "Checking web service health..."
 counter=0
