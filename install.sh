@@ -309,6 +309,12 @@ else
     fi
 fi
 
+# Get local IP addresses
+LOCAL_IP=$(hostname -I | awk '{print $1}' 2>/dev/null || echo "unknown")
+HOSTNAME=$(hostname 2>/dev/null || echo "unknown")
+echo "🌐 Local IP: $LOCAL_IP"
+echo "🖥️  Hostname: $HOSTNAME"
+
 # Setup environment file
 echo "⚙️ Setting up environment..."
 SAVED_DB_PASSWORD_FILE="data/postgres/.db_password"
@@ -484,9 +490,7 @@ if [ $counter -ge $timeout ]; then
     exit 1
 fi
 
-# Get local IP addresses
-LOCAL_IP=$(hostname -I | awk '{print $1}' 2>/dev/null || echo "unknown")
-HOSTNAME=$(hostname 2>/dev/null || echo "unknown")
+
 
 # Get superuser credentials from environment file
 SUPERUSER_USERNAME=$(grep "SUPERUSER_USERNAME=" BackEnd/.env | cut -d'=' -f2)
