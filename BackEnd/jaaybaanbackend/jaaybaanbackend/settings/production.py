@@ -25,7 +25,7 @@ DATABASES = {
 }
 
 # Static files configuration for serving React app
-STATIC_URL = "/app/jaaybaanbackend/locations/static/"
+STATIC_URL = "/app/jaaybaanbackend/locations/static/frontend/"
 STATIC_ROOT = "/app/static/"
 STATICFILES_DIRS = []
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
