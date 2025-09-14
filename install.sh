@@ -419,7 +419,7 @@ $DOCKER_COMPOSE_CMD -f docker-compose.prod.yml build --no-cache
 
 # Start database service first only
 echo "🗄️  Starting database service..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d --no-recreate db
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up -d db
 
 # Wait for services to be healthy
 echo "⏳ Waiting for services to start..."
@@ -464,8 +464,7 @@ echo "✅ Database credentials verified"
 
 # Now start web and backup services
 echo "🚀 Starting web and backup services..."
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml down
-$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up
+$DOCKER_COMPOSE_CMD -f docker-compose.prod.yml up --no-deps web backup
 
 echo "Checking web service health..."
 counter=0
