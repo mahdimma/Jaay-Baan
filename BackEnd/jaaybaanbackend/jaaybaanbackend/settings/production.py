@@ -40,11 +40,13 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = "/app/media"
 
+
+CORS_ALLOW_ALL_ORIGINS = False
 # CORS settings for local network access
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS", default="http://localhost:8000"
 ).split(",")
-CORS_ALLOW_ALL_ORIGINS = False
+print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_HEADERS = [
     "accept",
