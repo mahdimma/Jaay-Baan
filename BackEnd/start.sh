@@ -97,14 +97,14 @@ if not Location.objects.exists():
     # Add some containers
     fridge = kitchen.add_child(
         name="یخچال",
-        location_type="appliance",
+        location_type="storage",
         is_container=True,
         description="یخچال آشپزخانه"
     )
     
     wardrobe = bedroom.add_child(
         name="کمد لباس",
-        location_type="furniture", 
+        location_type="storage", 
         is_container=True,
         description="کمد لباس اتاق خواب"
     )

@@ -268,13 +268,21 @@ services:
   db:
     command: >
       postgres
-      -c shared_buffers=512MB          # Increase for more RAM
-      -c effective_cache_size=2GB      # Set to ~75% of available RAM
-      -c work_mem=16MB                 # Increase for complex queries
+      -c shared_buffers=32MB          # Increase for more RAM
+      -c effective_cache_size=128MB      # Set to ~75% of available RAM
 
   web:
     environment:
       - GUNICORN_WORKERS=6 # workers = (2 × CPU cores) + 1
+```
+
+add this if need to postgres option
+```yaml
+  command: >
+    postgres
+    -c maintenance_work_mem=16MB
+    -c wal_buffers=4MB
+    -c default_statistics_target=50
 ```
 
 ## 🤝 Contributing

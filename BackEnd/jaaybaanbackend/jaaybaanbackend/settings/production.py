@@ -32,8 +32,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "locations/static/frontend"),
 ]
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_AUTOREFRESH = True
+WHITENOISE_USE_FINDERS = False
+WHITENOISE_AUTOREFRESH = False
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files configuration
