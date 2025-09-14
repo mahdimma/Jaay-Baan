@@ -5,7 +5,7 @@ from .base import *
 DEBUG = config("DEBUG", default=False, cast=bool)
 SECRET_KEY = config("SECRET_KEY")
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
-print(f"env on product:{DEBUG} {SECRET_KEY}")
+
 # Database
 DATABASES = {
     "default": {
@@ -43,8 +43,10 @@ MEDIA_ROOT = "/app/media"
 
 CORS_ALLOW_ALL_ORIGINS = False
 # CORS settings for local network access
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
-print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS", default="http://localhost:8000"
+).split(",")
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_HEADERS = [
     "accept",

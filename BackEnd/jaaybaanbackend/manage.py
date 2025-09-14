@@ -14,7 +14,6 @@ def main():
         os.environ.setdefault(
             "DJANGO_SETTINGS_MODULE", f"jaaybaanbackend.settings.{env}"
         )
-        print(f"env on manage.py {env}")
 
     try:
         from django.core.management import execute_from_command_line
