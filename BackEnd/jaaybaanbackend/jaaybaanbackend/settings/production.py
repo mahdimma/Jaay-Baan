@@ -1,3 +1,4 @@
+import os
 from .base import *
 
 # Security settings for production
@@ -25,9 +26,11 @@ DATABASES = {
 }
 
 # Static files configuration for serving React app
-STATIC_URL = "/app/jaaybaanbackend/locations/static/frontend/"
+STATIC_URL = "/static/"
 STATIC_ROOT = "/app/static/"
-STATICFILES_DIRS = []
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "locations/static/frontend"),
+]
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
