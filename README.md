@@ -49,7 +49,7 @@ Jaay-Baan is a local-first, production-ready inventory management system for phy
 │    (served by Django)   │
 ├─────────────────────────┤
 │    Django Backend       │  ← API + Static file serving
-│   (Gunicorn + WhiteNoise)│
+│  (Gunicorn + WhiteNoise)│
 ├─────────────────────────┤
 │   PostgreSQL Database   │  ← DataBase
 │    (with daily backups) │
