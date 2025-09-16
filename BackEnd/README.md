@@ -1,7 +1,3 @@
-Here is a comprehensive README for the backend (BackEnd) of Jaay-Baan, summarizing its architecture, setup, features, API, deployment, and security:
-
----
-
 # Jaay-Baan Backend
 
 This is the backend service for Jaay-Baan, a local-first inventory management system. It is built with Django and Django REST Framework, optimized for containerized deployment, and designed to serve a React frontend and a RESTful API for managing hierarchical locations and items.
@@ -138,7 +134,3 @@ See the main project LICENSE file.
 ---
 
 **Jaay-Baan Backend**: Secure, scalable, and ready for production.
-
----
-
-Let me know if you want this written to README.md or need further customization!
