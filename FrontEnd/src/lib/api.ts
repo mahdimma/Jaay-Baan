@@ -1,8 +1,10 @@
 import axios from "axios";
+import { useAuthStore } from "../store";
+import { useQueryClient } from "@tanstack/react-query";
 
-const API_BASE_URL = `${window.location.origin}/api/v1`;
+// const API_BASE_URL = `${window.location.origin}/api/v1`;
 //dev
-// const API_BASE_URL = "http://localhost:8000/api/v1";
+const API_BASE_URL = "http://localhost:8000/api/v1";
 
 // Create axios instance
 export const api = axios.create({
@@ -31,8 +33,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      const { logout } = useAuthStore.getState();
+      logout();
+      useQueryClient().clear();
       localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
+      localStorage.removeItem("auth-storage");
       window.location.href = "/login";
     }
     return Promise.reject(error);
