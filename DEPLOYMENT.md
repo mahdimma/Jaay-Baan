@@ -253,12 +253,6 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ## 📈 Scaling Considerations
 
-### Resource Requirements
-
-- **Minimum**: 2GB RAM, 2 CPU cores, 10GB storage
-- **Recommended**: 4GB RAM, 4 CPU cores, 50GB storage
-- **Large datasets (50k+ items)**: 8GB RAM, 6 CPU cores, 100GB storage
-
 ### Performance Tuning
 
 For larger datasets, edit `docker-compose.prod.yml`:
@@ -269,7 +263,7 @@ services:
     command: >
       postgres
       -c shared_buffers=32MB          # Increase for more RAM
-      -c effective_cache_size=128MB      # Set to ~75% of available RAM
+      -c effective_cache_size=128MB
 
   web:
     environment:
@@ -277,12 +271,13 @@ services:
 ```
 
 add this if need to postgres option
+
 ```yaml
-  command: >
-    postgres
-    -c maintenance_work_mem=16MB
-    -c wal_buffers=4MB
-    -c default_statistics_target=50
+command: >
+  postgres
+  -c maintenance_work_mem=16MB
+  -c wal_buffers=4MB
+  -c default_statistics_target=50
 ```
 
 ## 🤝 Contributing
