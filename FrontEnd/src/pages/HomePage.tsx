@@ -325,7 +325,7 @@ const HomePage: React.FC = () => {
                   }`}
                 >
                   <Icon name="list" size={14} className="mr-1" />
-                  درخت
+                  فهرست
                 </button>
                 <button
                   onClick={() => updateUiState({ view: "grid" })}

@@ -122,24 +122,25 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   return (
     <>
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-3 space-x-reverse">
             <Icon
               name="check-circle"
               className="text-primary-600 dark:text-primary-400"
               size={20}
             />
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
               {selectedCount} مورد انتخاب شده
             </span>
           </div>
 
-          <div className="flex items-center space-x-2 space-x-reverse">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:justify-end">
             <Button
               size="sm"
               variant="outline"
               onClick={handleBulkMarkCleaned}
               loading={bulkOperationMutation.isPending}
+              disabled={bulkOperationMutation.isPending}
               icon={<Icon name="check-circle" size={16} className="ml-1" />}
               text="تمیز شده"
             />
@@ -149,6 +150,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
               variant="outline"
               onClick={() => setIsMoveModalOpen(true)}
               loading={bulkOperationMutation.isPending}
+              disabled={bulkOperationMutation.isPending}
               icon={<Icon name="move" size={16} className="ml-1" />}
               text="جابجایی"
             />
@@ -158,6 +160,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
               variant="danger"
               onClick={() => setIsDeleteModalOpen(true)}
               loading={bulkOperationMutation.isPending}
+              disabled={bulkOperationMutation.isPending}
               icon={<Icon name="trash" size={16} className="ml-1" />}
               text="حذف"
             />

@@ -22,6 +22,7 @@ interface LazyTreeSelectorProps {
   rootLabel?: string;
   emptyMessage?: string;
   filterContainers?: boolean;
+  filterCurrentId?: number; // New prop
 }
 
 interface LazyTreeNodeProps {
@@ -32,6 +33,7 @@ interface LazyTreeNodeProps {
   onNodeUpdate?: (nodeId: number, updates: Partial<LazyTreeNode>) => void;
   onLoadChildren?: (nodeId: number) => Promise<void>;
   filterContainers?: boolean;
+  filterCurrentId?: number; // New prop
 }
 
 const LazyTreeNodeComponent: React.FC<LazyTreeNodeProps> = ({
@@ -42,6 +44,7 @@ const LazyTreeNodeComponent: React.FC<LazyTreeNodeProps> = ({
   onNodeUpdate,
   onLoadChildren,
   filterContainers = false,
+  filterCurrentId: filterCurrentId, // New prop
 }) => {
   const hasChildren = node.is_container && node.children_count > 0;
   const locationTypeIcon =
@@ -50,7 +53,17 @@ const LazyTreeNodeComponent: React.FC<LazyTreeNodeProps> = ({
   const isExpanded = node.isExpanded || false;
   const isLoading = node.isLoading || false;
 
+  // New function to check if node should be filtered
+  const isNodeFiltered = (nodeId: number): boolean => {
+    return filterCurrentId !== undefined && nodeId === filterCurrentId;
+  };
+
   const canSelectNode = (node: TreeNode): boolean => {
+    // Check if this node or any parent is filtered
+    if (isNodeFiltered(node.id)) {
+      return false;
+    }
+
     if (filterContainers) {
       return node.is_container;
     }
@@ -58,9 +71,12 @@ const LazyTreeNodeComponent: React.FC<LazyTreeNodeProps> = ({
   };
 
   const canSelect = canSelectNode(node);
+  // New: Check if node is expandable
+  const isExpandable = hasChildren && !isNodeFiltered(node.id);
 
   const handleToggle = async () => {
-    if (!hasChildren) return;
+    // New: Prevent expanding filtered nodes
+    if (!isExpandable) return;
 
     if (!isExpanded) {
       // Expanding - load children if not loaded yet
@@ -111,7 +127,7 @@ const LazyTreeNodeComponent: React.FC<LazyTreeNodeProps> = ({
                 handleToggle();
               }}
               className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
-              disabled={isLoading}
+              disabled={isLoading || !isExpandable} // New: Disable if not expandable
             >
               {isLoading ? (
                 <LoadingSpinner size="sm" />
@@ -170,7 +186,11 @@ const LazyTreeNodeComponent: React.FC<LazyTreeNodeProps> = ({
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
             {locationTypeLabels[node.location_type]}
-            {!canSelect && filterContainers && " (غیر ظرف)"}
+            {!canSelect &&
+              filterContainers &&
+              !node.is_container &&
+              " (غیر ظرف)"}
+            {!canSelect && isNodeFiltered(node.id) && " (خودش و محتویات)"}
           </div>
         </div>
 
@@ -197,6 +217,7 @@ const LazyTreeNodeComponent: React.FC<LazyTreeNodeProps> = ({
               onNodeUpdate={onNodeUpdate}
               onLoadChildren={onLoadChildren}
               filterContainers={filterContainers}
+              filterCurrentId={filterCurrentId} // Pass down
             />
           ))}
         </div>
@@ -214,6 +235,7 @@ const LazyTreeSelector: React.FC<LazyTreeSelectorProps> = ({
   rootLabel = "ریشه (بدون والد)",
   emptyMessage = "مکانی برای انتخاب موجود نیست",
   filterContainers = false,
+  filterCurrentId, // New prop
 }) => {
   const [treeData, setTreeData] = useState<LazyTreeNode[]>([]);
   const lazyTreeNode = useLazyTreeNode();
@@ -357,6 +379,7 @@ const LazyTreeSelector: React.FC<LazyTreeSelectorProps> = ({
               onNodeUpdate={handleNodeUpdate}
               onLoadChildren={loadChildren}
               filterContainers={filterContainers}
+              filterCurrentId={filterCurrentId} // Pass down
             />
           ))}
         </div>

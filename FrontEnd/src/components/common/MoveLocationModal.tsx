@@ -80,6 +80,7 @@ export const MoveLocationModal: React.FC<MoveLocationModalProps> = ({
           rootLabel="ریشه (بدون والد)"
           emptyMessage="مکانی برای انتخاب موجود نیست"
           filterContainers={true}
+          filterCurrentId={location.id}
         />
 
         {/* Selected Location Preview */}

@@ -5,13 +5,23 @@ import { useAuthStore } from "../../store";
 import { useLogout } from "../../hooks/useApi";
 import ThemeToggle from "../ui/ThemeToggle";
 
-const Sidebar: React.FC = () => {
+// Add onClose prop to the component props
+const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const location = useLocation();
   const { user } = useAuthStore();
   const logoutMutation = useLogout();
 
   const handleLogout = () => {
     logoutMutation.mutate();
+  };
+
+  // Handle navigation item click
+  const handleNavigationClick = () => {
+    // Only close on mobile devices
+    if (onClose && window.innerWidth < 1024) {
+      // 1024px is tailwind's lg breakpoint
+      onClose();
+    }
   };
 
   const navigationItems = [
@@ -25,7 +35,11 @@ const Sidebar: React.FC = () => {
     <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
       {/* Header with logo */}
       <div className="flex items-center px-4 mb-6">
-        <Link to="/" className="flex items-center space-x-2 space-x-reverse">
+        <Link
+          to="/"
+          className="flex items-center space-x-2 space-x-reverse"
+          onClick={handleNavigationClick}
+        >
           <Icon
             name="layers"
             className="text-primary-600 dark:text-white"
@@ -44,6 +58,7 @@ const Sidebar: React.FC = () => {
             <Link
               key={item.path}
               to={item.path}
+              onClick={handleNavigationClick} // Add onClick handler
               className={`flex items-center px-4 py-2 mt-5 text-gray-600 dark:text-gray-300 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white ${
                 location.pathname === item.path
                   ? "bg-gray-100 dark:bg-gray-700"

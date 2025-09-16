@@ -31,10 +31,14 @@ const Modal: React.FC<ModalProps> = ({
 
     if (isOpen) {
       document.addEventListener("keydown", handleKeyDown);
+      // Prevent background scrolling when modal is open
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      // Restore scrolling when modal is closed
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -49,23 +53,21 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div
-        className={`flex min-h-screen items-center justify-center p-4 transition-all duration-300 ${
-          isSidebarOpen ? "mr-64" : "mr-0"
-        }`}
-      >
+      <div className="flex min-h-screen items-center justify-center p-4">
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 transition-opacity"
           onClick={onClose}
         />
 
-        {/* Modal */}
+        {/* Modal - Only apply margin shift on large screens */}
         <div
           className={cn(
             "relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full",
             sizes[size],
-            className
+            className,
+            "lg:transition-all lg:duration-300",
+            isSidebarOpen ? "lg:mr-64" : "lg:mr-0"
           )}
         >
           {/* Header */}
