@@ -1,3 +1,5 @@
+[![Build Frontend](https://github.com/mahdimma/Jaay-Baan/actions/workflows/build-frontend.yml/badge.svg)](https://github.com/mahdimma/Jaay-Baan/actions/workflows/build-frontend.yml)
+
 # Jaay-Baan
 
 Jaay-Baan is a local-first, production-ready inventory management system for physical items, designed for personal and small business use. It features a modern React frontend, a robust Django backend, and a PostgreSQL database, all containerized for easy deployment and maintenance.
