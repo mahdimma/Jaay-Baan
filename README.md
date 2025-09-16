@@ -88,7 +88,7 @@ The installer will:
 
 ### Access
 
-- **App**: http://localhost:8000, http://{local_ip}:8000
+- **App**: http://localhost:8000, http://{local_ip}:8000 (if exist)
 - **Admin**: http://localhost:8000/admin (default: admin/admin123)
 
 ---
