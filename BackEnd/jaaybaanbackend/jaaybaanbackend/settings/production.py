@@ -31,7 +31,7 @@ STATIC_ROOT = "/app/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "locations/static/frontend"),
 ]
-MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+MIDDLEWARE.insert(2, "whitenoise.middleware.WhiteNoiseMiddleware")
 WHITENOISE_USE_FINDERS = False
 WHITENOISE_AUTOREFRESH = False
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
