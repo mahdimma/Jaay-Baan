@@ -329,9 +329,7 @@ if [ ! -f "BackEnd/.env" ]; then
     else
         DB_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-12)
     fi
-    # Generate secure random password for superuser
-    # SUPERUSER_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
-    SUPERUSER_PASSWORD=admin122 # for simplify - can change after startup
+    SUPERUSER_PASSWORD=admin123 # for simplify - can change after startup
     SECRET_KEY=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-32)
 
     cat > BackEnd/.env << EOF
