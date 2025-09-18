@@ -2,9 +2,8 @@ import axios from "axios";
 import { useAuthStore } from "../store";
 import { useQueryClient } from "@tanstack/react-query";
 
-// const API_BASE_URL = `${window.location.origin}/api/v1`;
-//dev
-const API_BASE_URL = "http://localhost:8000/api/v1";
+const API_BASE_URL = `${window.location.origin}/api/v1`;
+// const API_BASE_URL = "http://localhost:8000/api/v1"; // development
 
 // Create axios instance
 export const api = axios.create({
