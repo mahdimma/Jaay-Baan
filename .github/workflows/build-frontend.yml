@@ -42,9 +42,9 @@ jobs:
 
       - name: Create dist archive
         run: |
-          cd FrontEnd/
-          zip -r frontend-dist.zip dist/*
-          ls -la frontend-dist.zip
+          cd FrontEnd/dist
+          zip -r ../frontend-dist.zip ./*
+          ls -la ../frontend-dist.zip
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
