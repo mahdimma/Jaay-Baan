@@ -329,7 +329,8 @@ if [ ! -f "BackEnd/.env" ]; then
     else
         DB_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-12)
     fi
-    SUPERUSER_PASSWORD=admin123 # for simplify - can change after startup
+    # Generate secure random password for superuser
+    SUPERUSER_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
     SECRET_KEY=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-32)
 
     cat > BackEnd/.env << EOF
@@ -596,7 +597,7 @@ echo "================================="
 echo ""
 echo "🔐 Login Credentials:"
 echo "  Username: ${SUPERUSER_USERNAME:-admin}"
-echo "  Password: admin123"
+echo "  Password: ${SUPERUSER_PASSWORD:-admin123}"
 echo "  ⚠️  Change password after first login!"
 echo ""
 echo "📱 Access URLs:"
