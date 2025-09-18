@@ -5,28 +5,28 @@
 Jaay-Baan is a local-first, production-ready inventory management system for physical items, designed for personal and small business use. It features a modern React frontend, a robust Django backend, and a PostgreSQL database, all containerized for easy deployment and maintenance.
 
 ---
-
 ## Table of Contents
 
-- Features
-- Architecture
-- Quick Start
-- Manual Backend Setup
-- Frontend Development
-- API Overview
-- Authentication
-- Locations API
-- Images & Media
-- Statistics & Search
-- Bulk Operations
-- Data Management
-- Deployment & Management
-- Performance
-- Security
-- Customization
-- Monitoring & Troubleshooting
-- Scaling & Contributing
-- License
+- [Features](#features)
+- [Architecture](#architecture)
+- [Quick Start](#quick-start)
+- [Manual Backend Setup](#manual-backend-setup)
+- [Frontend Development](#frontend-development)
+- [API Overview](#api-overview)
+- [Authentication](#authentication)
+- [Locations API](#locations-api)
+- [Images & Media](#images--media)
+- [Statistics & Search](#statistics--search)
+- [Bulk Operations](#bulk-operations)
+- [Data Management](#data-management)
+- [Deployment & Management](#deployment--management)
+- [Performance](#performance)
+- [Security](#security)
+- [Customization](#customization)
+- [Monitoring & Troubleshooting](#monitoring--troubleshooting)
+- [Scaling & Contributing](#scaling--contributing)
+- [License](#license)
+
 
 ---
 
